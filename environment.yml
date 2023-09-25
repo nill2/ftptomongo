@@ -1,0 +1,10 @@
+name: ftptomongo  # Replace 'myenv' with your desired environment name
+channels:
+  - defaults
+dependencies:
+  - python=3.10  # Specify the Python version you want
+  - numpy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - jupyter
