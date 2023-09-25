@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
+      matrix: 
+        version: [1]
 
     steps:
     - uses: actions/checkout@v3
