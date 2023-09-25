@@ -1,5 +1,6 @@
 from flask import Flask
 from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION
+import os
 
 app = Flask(__name__)
 
