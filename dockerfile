@@ -13,7 +13,8 @@ ENV MONGO_DB="nill-home"
 ENV MONGO_COLLECTION="nill-home-photos"
 
 # Copy the Python script and requirements file into the container
-COPY your_script.py /app/your_script.py
+COPY ftptomongo.py /app/ftptomongo.py
+COPY config.py /app/config.py
 COPY requirements.txt /app/requirements.txt
 
 # Set the working directory to /appЗ
