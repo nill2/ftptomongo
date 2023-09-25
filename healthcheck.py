@@ -1,3 +1,5 @@
+
+import os
 from flask import Flask
 from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION
 
@@ -19,6 +21,7 @@ if __name__ == "__main__":
         os.makedirs(FTP_ROOT)
     
     try:
-        run_ftp_server()
+        result = health_check()
+        print(result)
     except KeyboardInterrupt:
         print("FTP server stopped.")
