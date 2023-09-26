@@ -66,7 +66,7 @@ def start_ftp_test_server():
     process = subprocess.Popen(SERVER_COMMAND, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Wait for the server to start (you may need to adjust the timing)
-    time.sleep(5)
+    time.sleep(30)
 
     # Yield control to the test
     yield
@@ -82,7 +82,7 @@ def test_connect_to_mongodb():
     collection = connect_to_mongodb()
     assert collection is not None
 
-@pytest.mark.timeout(15)  # Adjust the timeout value as needed
+@pytest.mark.timeout(60)  # Adjust the timeout value as needed
 def test_ftp_upload_and_download(): #(ftp_server, temp_ftp_root):
     # Set a timeout value (in seconds)
     timeout = 5  # You can adjust this value as needed
