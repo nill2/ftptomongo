@@ -91,7 +91,7 @@ def test_ftp_upload_and_download(): #(ftp_server, temp_ftp_root):
    
     #test upload and download
     ftp = FTP()
-    ftp.connect('localhost', FTP_PORT)  # Set the timeout when connecting
+    ftp.connect(FTP_HOST, FTP_PORT)  # Set the timeout when connecting
     ftp.login(user=FTP_USER, passwd=FTP_PASSWORD)
     print('Connected to FTP server')
     # Simulate file upload
