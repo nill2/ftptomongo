@@ -3,7 +3,7 @@ FROM python:3.8-slim
 
 # Set environment variables for FTP and MongoDB configurations
 ENV FTP_HOST=localhost
-ENV FTP_PORT=21
+ENV FTP_PORT=2121
 ENV FTP_USER="user"
 ENV FTP_PASS="password"
 ENV FTP_ROOT="/"

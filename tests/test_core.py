@@ -2,7 +2,7 @@ import os
 import time
 import pytest
 from tempfile import TemporaryDirectory
-
+import subprocess
 from ftplib import FTP
 import sys
 
@@ -45,12 +45,36 @@ def cleanup_files(request):
         for file in files_to_delete:
             if os.path.exists(file):
                 os.remove(file)
-
+'''
 @pytest.fixture
 def ftp_server(temp_ftp_root):
     run_ftp_server()
     yield
     # Teardown: Stop the FTP server
+'''
+#set up FTP server for testing  
+SERVER_COMMAND = "python ftptomongo.py"
+FTP_HOST = "127.0.0.1"
+FTP_PORT = 2121  # Port used for testing
+
+#set up FTP test
+DESTINATION_DIR = "/ftp"
+    
+@pytest.fixture(scope="module", autouse=True)
+def start_ftp_test_server():
+    # Start the FTP server as a subprocess
+    process = subprocess.Popen(SERVER_COMMAND, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    # Wait for the server to start (you may need to adjust the timing)
+    time.sleep(2)
+
+    # Yield control to the test
+    yield
+
+    # Stop the server when the tests are done
+    process.terminate()
+    process.wait()    
+    
 
 def test_connect_to_mongodb():
     print('test_connect_to_mongodb')
@@ -64,11 +88,7 @@ def test_ftp_upload_and_download(): #(ftp_server, temp_ftp_root):
     test_data = 'Test content'
     
     print('test_ftp_upload_and_download')
-    #  test code  to perform FTP upload and download
-    
-    #create a ftp server
-    run_ftp_server()
-    
+   
     #test upload and download
     ftp = FTP()
     ftp.connect('localhost', FTP_PORT)  # Set the timeout when connecting
@@ -77,8 +97,10 @@ def test_ftp_upload_and_download(): #(ftp_server, temp_ftp_root):
     # Simulate file upload
     with open('test_file.txt', 'w') as file:
         file.write(test_data)
+     # Specify the destination directory and file name
+    dest_path = f"{DESTINATION_DIR}/test_file.txt"
     with open('test_file.txt', 'rb') as file:
-        ftp.storbinary('STOR test_file.txt', file)
+        ftp.storbinary(f'STOR {dest_path}', file)
     print('file uploaded to FTP server')   
     
     

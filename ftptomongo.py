@@ -32,18 +32,6 @@ def db_cleanup(collection):
             print("Failed to connect to MongoDB. File not uploaded.")
 
 def delete_expired_data(collection, field_name, expiration_period_days):
-    """
-    Deletes documents from a MongoDB collection where the specified date field
-    is older than the defined expiration period in days.
-
-    Args:
-    - collection: The MongoDB collection object.
-    - field_name: The name of the date field used for checking expiration.
-    - expiration_period_days: The number of days defining the expiration period.
-
-    Returns:
-    - The number of documents deleted.
-    """
     # Calculate the expiration date as a datetime object
     expiration_date = datetime.utcnow() - timedelta(days=expiration_period_days)
     
@@ -70,8 +58,9 @@ class MyHandler(FTPHandler):
                     print(f"Uploaded {os.path.basename(file_path)} to MongoDB")
             
             # Clean up the expired documents in the database
-            delete_expired_data(collection, "date", 365)
-            
+            expired_docs_deleted = delete_expired_data(collection, "date", 365)
+            print(f"Deleted " + expired_docs_deleted + " documents")
+                           
             # Delete the file from the FTP server
             file_to_del = os.path.join(FTP_ROOT, file_path)
             os.remove(file_to_del)
