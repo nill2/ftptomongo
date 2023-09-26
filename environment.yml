@@ -3,6 +3,7 @@ channels:
   - defaults
 dependencies:
   - python=3.10  # Specify the Python version you want
+  - pip
   - numpy
   - pandas
   - scikit-learn
