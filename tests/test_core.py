@@ -14,7 +14,7 @@ config_directory = os.path.join(current_directory, '..')
 print(config_directory)
 sys.path.append(config_directory)
 
-from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_USER, FTP_PASSWORD
+from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_USER, FTP_PASSWORD, FTP_HOST, ERROR_LVL
 from ftptomongo import connect_to_mongodb, MyHandler, run_ftp_server    
 import sys
 
@@ -77,7 +77,8 @@ def start_ftp_test_server():
     
 
 def test_connect_to_mongodb():
-    print('test_connect_to_mongodb')
+    if ERROR_LVL == 'debug':
+        print('test_connect_to_mongodb')
     collection = connect_to_mongodb()
     assert collection is not None
 
@@ -87,13 +88,15 @@ def test_ftp_upload_and_download(): #(ftp_server, temp_ftp_root):
     timeout = 5  # You can adjust this value as needed
     test_data = 'Test content'
     
-    print('test_ftp_upload_and_download')
+    if ERROR_LVL=="debug" :
+        print('test_ftp_upload_and_download')
    
     #test upload and download
     ftp = FTP()
     ftp.connect(FTP_HOST, FTP_PORT)  # Set the timeout when connecting
     ftp.login(user=FTP_USER, passwd=FTP_PASSWORD)
-    print('Connected to FTP server')
+    if ERROR_LVL=="debug" :
+        print('Connected to FTP server')
     # Simulate file upload
     with open('test_file.txt', 'w') as file:
         file.write(test_data)
@@ -101,7 +104,8 @@ def test_ftp_upload_and_download(): #(ftp_server, temp_ftp_root):
     dest_path = f"{DESTINATION_DIR}/test_file.txt"
     with open('test_file.txt', 'rb') as file:
         ftp.storbinary(f'STOR {dest_path}', file)
-    print('file uploaded to FTP server')   
+    if ERROR_LVL=="debug" :
+        print('file uploaded to FTP server')   
     
     
     with open('test_file.txt', 'rb') as file:

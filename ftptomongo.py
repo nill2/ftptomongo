@@ -1,11 +1,12 @@
 import os
+import socket
 import tempfile
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pymongo.server_api import ServerApi
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_USER, FTP_PASSWORD, ERROR_LVL
+from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_USER, FTP_PASSWORD, ERROR_LVL, FTP_HOST
 from pyftpdlib.servers import FTPServer
 from datetime import datetime, timedelta
 import time
@@ -78,7 +79,12 @@ def run_ftp_server():
     handler = MyHandler
     handler.authorizer = authorizer
     
-    server = FTPServer(("127.0.0.1", FTP_PORT), handler)
+    # Explicitly bind the socket to the desired host and port
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((FTP_HOST, FTP_PORT))  # Adjust host and port as needed
+    server_socket.listen(5)  # Start listening for incoming connections
+    
+    server = FTPServer(server_socket, handler)
     server.serve_forever()
 
 if __name__ == "__main__":
