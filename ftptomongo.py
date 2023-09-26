@@ -28,7 +28,8 @@ def connect_to_mongodb():
 def db_cleanup(collection):
         if collection is not None:  # Check if collection is not None
             collection.delete_many({})
-            print(f"Deleted all documents from MongoDB")
+            if ERROR_LVL=="debug" :
+                print(f"Deleted all documents from MongoDB")
         else:
             print("Failed to connect to MongoDB. File not uploaded.")
 
