@@ -54,7 +54,7 @@ def ftp_server(temp_ftp_root):
 '''
 #set up FTP server for testing  
 SERVER_COMMAND = "python ftptomongo.py"
-FTP_HOST = "127.0.0.1"
+FTP_HOST = os.getenv("FTP_HOST", "localhost")
 FTP_PORT = 2121  # Port used for testing
 
 #set up FTP test
