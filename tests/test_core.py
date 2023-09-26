@@ -82,7 +82,7 @@ def test_connect_to_mongodb():
     collection = connect_to_mongodb()
     assert collection is not None
 
-@pytest.mark.timeout(90)  # Adjust the timeout
+@pytest.mark.timeout(90)   # Adjust the timeout
 @pytest.mark.skip(reason="Test not implemented yet")
 def test_ftp_upload_and_download(): #(ftp_server, temp_ftp_root):
     # Set a timeout value (in seconds)

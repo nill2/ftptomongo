@@ -68,6 +68,6 @@ jobs:
           pip install pymongo
       - name: Test with pytest
         run: |
-          cd "$CurrentDirectory"
+          cd "$CurrentDirectory" 
           conda install pytest
-          pytest
+          pytest 
