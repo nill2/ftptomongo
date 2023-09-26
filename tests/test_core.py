@@ -25,6 +25,8 @@ current_directory = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(current_directory)
 
 # FTP server configuration for testing
+FTP_PORT = 2121
+
 #FTP_ROOT = "/"
 #FTP_PORT = 21  # Use a different port for testing
 
@@ -64,6 +66,10 @@ def test_ftp_upload_and_download(): #(ftp_server, temp_ftp_root):
     print('test_ftp_upload_and_download')
     #  test code  to perform FTP upload and download
     
+    #create a ftp server
+    run_ftp_server()
+    
+    #test upload and download
     ftp = FTP()
     ftp.connect('localhost', FTP_PORT)  # Set the timeout when connecting
     ftp.login(user=FTP_USER, passwd=FTP_PASSWORD)

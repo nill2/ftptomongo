@@ -12,16 +12,6 @@ import time
 import bson
 
 
-# FTP server configuration
-FTP_ROOT = "/path/to/ftp/root"  # Change this to your desired FTP root folder
-FTP_PORT = 21
-
-# MongoDB configuration - moved to config.py
-#MONGO_HOST = "localhost"  # Change this to your MongoDB server's address
-#MONGO_PORT = server_api=ServerApi('1') ##default 27017
-#MONGO_DB = "ftp_files"
-#MONGO_COLLECTION = "uploaded_files"
-
 def connect_to_mongodb():
     try:
         client = MongoClient(MONGO_HOST, MONGO_PORT)
