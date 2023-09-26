@@ -1,8 +1,10 @@
 # config.py
+import os
 
 # FTP server configuration
-FTP_ROOT = "/"
-FTP_PORT = 21
+FTP_ROOT = "/ftp/"
+FTP_PORT = 2121
+FTP_HOST = os.getenv("FTP_HOST", "localhost")
 # change this to github secrets once move to production and use server deployments
 FTP_USER = "user" # ${{ secrets.FTP_USER }}
 FTP_PASSWORD = "password" # ${{ secrets.FTP_PASSWORD }}

@@ -3,7 +3,7 @@ FROM python:3.8-slim
 
 # Set environment variables for FTP and MongoDB configurations
 ENV FTP_HOST=localhost
-ENV FTP_PORT=21
+ENV FTP_PORT=2121
 ENV FTP_USER="user"
 ENV FTP_PASS="password"
 ENV FTP_ROOT="/"
@@ -23,8 +23,8 @@ WORKDIR /app
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the FTP port
-EXPOSE $FTP_PORT
+# Expose FTP and passive mode ports (e.g., 21 and 60000-60100)
+EXPOSE $FTP_PORT 60000-60100
 
 # Run the Python script
 CMD ["python", "ftptomongo.py"]

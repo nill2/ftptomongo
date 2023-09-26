@@ -1,26 +1,17 @@
 import os
+import socket
 import tempfile
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pymongo.server_api import ServerApi
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_USER, FTP_PASSWORD, ERROR_LVL
+from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_USER, FTP_PASSWORD, ERROR_LVL, FTP_HOST
 from pyftpdlib.servers import FTPServer
 from datetime import datetime, timedelta
 import time
 import bson
 
-
-# FTP server configuration
-FTP_ROOT = "/path/to/ftp/root"  # Change this to your desired FTP root folder
-FTP_PORT = 21
-
-# MongoDB configuration - moved to config.py
-#MONGO_HOST = "localhost"  # Change this to your MongoDB server's address
-#MONGO_PORT = server_api=ServerApi('1') ##default 27017
-#MONGO_DB = "ftp_files"
-#MONGO_COLLECTION = "uploaded_files"
 
 def connect_to_mongodb():
     try:
@@ -42,18 +33,6 @@ def db_cleanup(collection):
             print("Failed to connect to MongoDB. File not uploaded.")
 
 def delete_expired_data(collection, field_name, expiration_period_days):
-    """
-    Deletes documents from a MongoDB collection where the specified date field
-    is older than the defined expiration period in days.
-
-    Args:
-    - collection: The MongoDB collection object.
-    - field_name: The name of the date field used for checking expiration.
-    - expiration_period_days: The number of days defining the expiration period.
-
-    Returns:
-    - The number of documents deleted.
-    """
     # Calculate the expiration date as a datetime object
     expiration_date = datetime.utcnow() - timedelta(days=expiration_period_days)
     
@@ -80,8 +59,9 @@ class MyHandler(FTPHandler):
                     print(f"Uploaded {os.path.basename(file_path)} to MongoDB")
             
             # Clean up the expired documents in the database
-            delete_expired_data(collection, "date", 365)
-            
+            expired_docs_deleted = delete_expired_data(collection, "date", 365)
+            print(f"Deleted " + expired_docs_deleted + " documents")
+                           
             # Delete the file from the FTP server
             file_to_del = os.path.join(FTP_ROOT, file_path)
             os.remove(file_to_del)
@@ -99,7 +79,12 @@ def run_ftp_server():
     handler = MyHandler
     handler.authorizer = authorizer
     
-    server = FTPServer(("127.0.0.1", FTP_PORT), handler)
+    # Explicitly bind the socket to the desired host and port
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((FTP_HOST, FTP_PORT))  # Adjust host and port as needed
+    server_socket.listen(5)  # Start listening for incoming connections
+    
+    server = FTPServer(server_socket, handler)
     server.serve_forever()
 
 if __name__ == "__main__":
