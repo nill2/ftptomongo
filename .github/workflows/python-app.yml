@@ -42,6 +42,7 @@ jobs:
           pip install pyftpdlib
           pip install pylint
           pip install psutil
+          pip install pymongo
       - name: Lint with flake8
         run: |
           cd "$CurrentDirectory"
@@ -50,9 +51,6 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Install pymongo
-        run: |
-          pip install pymongo
 
       - name: Set up MongoDB
         run: |
@@ -70,24 +68,26 @@ jobs:
           sleep 10
           
           # Create a collection for testing
-          sudo -u mongodb mongo --eval 'db.createCollection("nill-home-photos")' localhost/nill-home
+          #sudo -u mongodb mongo --eval 'db.createCollection("nill-home-photos")' localhost/nill-home
+          python create_collection.py
         timeout-minutes: 3
 
-      - name: Create MongoDB User
-        env:
-          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGODB_ADMIN_USER }}
-          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_ADMIN_PASSWORD }}
-        run: |
+ #     - name: Create MongoDB User
+ #       env:
+ #         MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGODB_ADMIN_USER }}
+ #         MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_ADMIN_PASSWORD }}
+ #       run: |
           # Install MongoDB client
           # sudo apt-get update
           # sudo apt-get install -y mongodb-clients
           
           # Wait for MongoDB to start
-          sleep 10
+ #         sleep 10
           
           # Create a user with readWrite role
-          sudo mongo admin --host localhost --eval 'db.createUser({ user: "user", pwd: "password", roles: ["readWrite"] })'
-        timeout-minutes: 3
+          #sudo mongo admin --host localhost --eval 'db.createUser({ user: "user", pwd: "password", roles: ["readWrite"] })'
+ #         python create_collection.py
+  #      timeout-minutes: 3
         
       - name: Start FTP server
         env:
