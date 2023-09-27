@@ -37,10 +37,10 @@ jobs:
         run: |
           # $CONDA is an environment variable pointing to the root of the miniconda directory
           echo $CONDA/bin >> $GITHUB_PATH
-      - name: Install pyftpdlib from PyPI
+      - name: Install tools from PyPI
         run: |
           pip install pyftpdlib
-
+          pip install pylint
       - name: Lint with flake8
         run: |
           cd "$CurrentDirectory"
@@ -49,8 +49,8 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Analysing the code with pylint
-        run: |
+      - name: Install and Analysing the code with pylint
+        run: |           
             pylint $(git ls-files '*.py')
     
       - name: Install pymongo
