@@ -29,15 +29,16 @@ except pymongo.errors.OperationFailure as e:
 # Create the 'nill-home-photos' collection
 collection = db[MONGO_COLLECTION]
 
+
 # Perform operations on the collection (e.g., insert, update, query)
 
 # For testing purposes, let's insert a document
-document = {"title": "Test Photo", "description": "A test photo document."}
-collection.insert_one(document)
+#document = {"title": "Test Photo", "description": "A test photo document."}
+#collection.insert_one(document)
 
 # Query the collection
-result = collection.find_one({"title": "Test Photo"})
-print("Query result:", result)
+#result = collection.find_one({"title": "Test Photo"})
+#print("Query result:", result)
 
 # Close the MongoDB client when done
 client.close()
