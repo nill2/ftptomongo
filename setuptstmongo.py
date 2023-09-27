@@ -1,30 +1,33 @@
+'''
+Script to create a test user with read and write access, test db and collection in Mongodb
+'''
 import pymongo
 
 # MongoDB connection details
-mongo_host = 'localhost'
-mongo_port = 27017
-mongo_db = 'nill-home'
-mongo_collection = 'nill-home-photos'
-mongo_username = 'user'
-mongo_password = 'password'
+MONGO_HOST = 'localhost'
+MONGO_PORT = 27017
+MONGO_DB = 'nill-home'
+MONGO_COLLECTION = 'nill-home-photos'
+MONGO_USER = 'user'
+MONGO_PASSWORD = 'password'
 
 # Create a MongoDB client
-client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
+client = pymongo.MongoClient(host=MONGO_HOST, port=MONGO_PORT)
 
 # Create the 'nill-home' database
-db = client[mongo_db]
+db = client[MONGO_DB]
 
 # Create a test user with read and write access
 try:
-    db.command("createUser", mongo_username, pwd=mongo_password, roles=["readWrite"])
+    db.command("createUser", MONGO_USER, pwd=MONGO_PASSWORD, roles=["readWrite"])
 except pymongo.errors.OperationFailure as e:
     if "already exists" in str(e):
-        print(f"User '{mongo_username}' already exists.")
+        print(f"User '{MONGO_COLLECTION}' already exists.")
     else:
         raise e
 
 # Create the 'nill-home-photos' collection
-collection = db[mongo_collection]
+collection = db[MONGO_COLLECTION]
 
 # Perform operations on the collection (e.g., insert, update, query)
 

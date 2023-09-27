@@ -69,7 +69,7 @@ jobs:
           
           # Create a collection for testing
           #sudo -u mongodb mongo --eval 'db.createCollection("nill-home-photos")' localhost/nill-home
-          python create_collection.py
+          python setuptstmongo.py
         timeout-minutes: 3
 
  #     - name: Create MongoDB User
