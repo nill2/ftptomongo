@@ -70,7 +70,7 @@ jobs:
           sleep 10
           
           # Create a collection for testing
-          mongo --eval 'db.createCollection("testCollection")' localhost/testDatabase
+          sudo -u mongodb mongo --eval 'db.createCollection("nill-home-photos")' localhost/nill-home
         timeout-minutes: 3
 
       - name: Create MongoDB User
@@ -86,7 +86,7 @@ jobs:
           sleep 10
           
           # Create a user with readWrite role
-          mongo admin --host localhost --eval 'db.createUser({ user: "user", pwd: "myapppassword", roles: ["readWrite"] })'
+          mongo admin --host localhost --eval 'db.createUser({ user: "user", pwd: "password", roles: ["readWrite"] })'
         timeout-minutes: 3
         
       - name: Start FTP server
