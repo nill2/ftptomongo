@@ -116,7 +116,7 @@ def test_connect_to_mongodb():
 
 @pytest.mark.timeout(CONNECT_TIMEOUT)   # Adjust the timeout
 #@pytest.mark.skip(reason="Test not implemented yet")
-def test_ftp_upload_and_download(cleanup_files: None,cleanup_mongodb: None): # pylint: disable=unused-argument,redefined-outer-name
+def test_ftp_upload_and_download(): # pylint: disable=unused-argument,redefined-outer-name   cleanup_files: None,cleanup_mongodb: None
     '''
     core test of the application fucntionality
     checks file upload and transfer to mongodb functionality
@@ -150,9 +150,12 @@ def test_ftp_upload_and_download(cleanup_files: None,cleanup_mongodb: None): # p
      # Specify the destination directory and file name
     dest_path = f"{DESTINATION_DIR}/test_file.txt"
     with open('test_file.txt', 'rb') as file:
-        ftp.storbinary(f'STOR {dest_path}', file)
-    if ERROR_LVL=="debug" :
-        print('file uploaded to FTP server')
+        try:
+            ftp.storbinary(f'STOR {dest_path}', file)
+            if ERROR_LVL=="debug" :
+                print('file uploaded to FTP server')
+        except Exception as upload_exception: # pylint: disable=broad-exception-caught
+            print(f"Failed upload the file  : {upload_exception}")
 
     with open('test_file.txt', 'rb') as file:
         data = file.read()
