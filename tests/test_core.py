@@ -116,7 +116,7 @@ def test_connect_to_mongodb():
 
 @pytest.mark.timeout(CONNECT_TIMEOUT)   # Adjust the timeout
 #@pytest.mark.skip(reason="Test not implemented yet")
-def test_ftp_upload_and_download(): # pylint: disable=unused-argument,redefined-outer-name   cleanup_files: None,cleanup_mongodb: None
+def test_ftp_upload_and_download(cleanup_files,cleanup_mongodb): # pylint: disable=unused-argument,redefined-outer-name
     '''
     core test of the application fucntionality
     checks file upload and transfer to mongodb functionality

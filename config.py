@@ -14,10 +14,16 @@ FTP_USER = "user" # ${{ secrets.FTP_USER }}
 FTP_PASSWORD = "password" # ${{ secrets.FTP_PASSWORD }}
 
 # MongoDB configuration
-MONGO_HOST = (
-    "mongodb+srv://appUser:qovkm123@cluster0.qfjxdop.mongodb.net/"
+# Check if the code is running in a test environment
+if "GHA_TESTS" in os.environ:
+    # Use localhost address for tests
+    MONGO_HOST = ("mongodb+srv://user:password@localhost/"
+    "?retryWrites=true&w=majority&appName=AtlasApp")
+else:
+    # Use the cloud-based MongoDB address for production
+    MONGO_HOST = ("mongodb+srv://appUser:qovkm123@cluster0.qfjxdop.mongodb.net/"
     "?retryWrites=true&w=majority&appName=AtlasApp"
-)
+    )
 # ${{ secrets.MONGO_HOST }}
 MONGO_PORT = 27017
 MONGO_DB = "nill-home"
