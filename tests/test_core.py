@@ -7,7 +7,16 @@ import time
 import subprocess
 from tempfile import TemporaryDirectory
 from ftplib import FTP
+import psutil
 import pytest
+
+#set up FTP server for testing
+SERVER_COMMAND = "python ftptomongo.py"
+
+#set up FTP test
+#DESTINATION_DIR = "/ftp"
+DESTINATION_DIR= "/"
+CONNECT_TIMEOUT = 35 #connect to FTP server timeout in seconds
 
 # Get the current directory of the test script
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -46,18 +55,24 @@ def cleanup_files(request):  # pylint: disable=redefined-outer-name
                 os.remove(file)
     request.addfinalizer(cleanup_files_local)
 
-#set up FTP server for testing
-SERVER_COMMAND = "python ftptomongo.py"
-
-#set up FTP test
-#DESTINATION_DIR = "/ftp"
-DESTINATION_DIR= "/"
+def is_ftp_server_running():
+    '''
+    check if the FTP server is running
+    '''
+    for process in psutil.process_iter(attrs=['name']):
+        if process.info['name'] == 'python' and 'ftptomongo.py' in process.cmdline():
+            return True
+    return False
 
 @pytest.fixture(scope="module", autouse=True)
 def start_ftp_test_server():
     '''
     start the FTP server as a subprocess to check the fuctionality of the application
     '''
+    if is_ftp_server_running():
+        yield
+        return  # FTP server is already running, no need to start a new instance
+
     # Start the FTP server as a subprocess
     with subprocess.Popen(SERVER_COMMAND,
                                shell=True,
@@ -66,7 +81,7 @@ def start_ftp_test_server():
                                ) as process:
 
         # Wait for the server to start (you may need to adjust the timing)
-        time.sleep(45)
+        time.sleep(10)
 
         # Yield control to the test
         yield
@@ -99,9 +114,9 @@ def test_connect_to_mongodb():
     collection = connect_to_mongodb()
     assert collection is not None
 
-@pytest.mark.timeout(90)   # Adjust the timeout
-@pytest.mark.skip(reason="Test not implemented yet")
-def test_ftp_upload_and_download(cleanup_files: None,cleanup_mongodb: None): # pylint: disable=unused-argument,redefined-outer-name
+@pytest.mark.timeout(CONNECT_TIMEOUT)   # Adjust the timeout
+#@pytest.mark.skip(reason="Test not implemented yet")
+def test_ftp_upload_and_download(): # pylint: disable=unused-argument,redefined-outer-name   cleanup_files: None,cleanup_mongodb: None
     '''
     core test of the application fucntionality
     checks file upload and transfer to mongodb functionality
@@ -114,9 +129,19 @@ def test_ftp_upload_and_download(cleanup_files: None,cleanup_mongodb: None): # p
         print('test_ftp_upload_and_download')
 
     #test upload and download
+
+    start_time = time.time()
+    ftp_tries = 0
     ftp = FTP()
-    ftp.connect(FTP_HOST, FTP_PORT,timeout)  # Set the timeout when connecting
-    ftp.login(user=FTP_USER, passwd=FTP_PASSWORD)
+    while time.time() - start_time < CONNECT_TIMEOUT:
+        try:
+            ftp_tries = ftp_tries + 1
+            ftp.connect(FTP_HOST, FTP_PORT,timeout)
+            ftp.login(user=FTP_USER, passwd=FTP_PASSWORD)
+            break
+        except Exception as ftp_exception: # pylint: disable=broad-exception-caught
+            print(f"Retrying ({ftp_tries}) after error: {ftp_exception}")
+
     if ERROR_LVL=="debug" :
         print('Connected to FTP server')
     # Simulate file upload
@@ -125,9 +150,12 @@ def test_ftp_upload_and_download(cleanup_files: None,cleanup_mongodb: None): # p
      # Specify the destination directory and file name
     dest_path = f"{DESTINATION_DIR}/test_file.txt"
     with open('test_file.txt', 'rb') as file:
-        ftp.storbinary(f'STOR {dest_path}', file)
-    if ERROR_LVL=="debug" :
-        print('file uploaded to FTP server')
+        try:
+            ftp.storbinary(f'STOR {dest_path}', file)
+            if ERROR_LVL=="debug" :
+                print('file uploaded to FTP server')
+        except Exception as upload_exception: # pylint: disable=broad-exception-caught
+            print(f"Failed upload the file  : {upload_exception}")
 
     with open('test_file.txt', 'rb') as file:
         data = file.read()

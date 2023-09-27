@@ -41,6 +41,7 @@ jobs:
         run: |
           pip install pyftpdlib
           pip install pylint
+          pip install psutil
       - name: Lint with flake8
         run: |
           cd "$CurrentDirectory"
@@ -56,6 +57,8 @@ jobs:
       - name: Install pymongo
         run: |
           pip install pymongo
+      - name: Start FTP server
+        run: python ftptomongo.py &
       - name: Test with pytest
         run: |
           cd "$CurrentDirectory" 
