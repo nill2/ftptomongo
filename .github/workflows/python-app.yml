@@ -63,8 +63,8 @@ jobs:
       - name: Create MongoDB Collection
         run: |
           # Install MongoDB client
-          apt-get update
-          apt-get install -y mongodb-clients
+          # apt-get update
+          #apt-get install -y mongodb-clients
           
           # Wait for MongoDB to start
           sleep 10
@@ -79,8 +79,8 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_ADMIN_PASSWORD }}
         run: |
           # Install MongoDB client
-          sudo apt-get update
-          sudo apt-get install -y mongodb-clients
+          # sudo apt-get update
+          # sudo apt-get install -y mongodb-clients
           
           # Wait for MongoDB to start
           sleep 10
