@@ -56,6 +56,8 @@ jobs:
       - name: Install pymongo
         run: |
           pip install pymongo
+      - name: Start FTP server
+        run: python ftptomongo.py &
       - name: Test with pytest
         run: |
           cd "$CurrentDirectory" 
