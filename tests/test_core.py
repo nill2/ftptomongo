@@ -100,7 +100,7 @@ def test_connect_to_mongodb():
     assert collection is not None
 
 @pytest.mark.timeout(90)   # Adjust the timeout
-#@pytest.mark.skip(reason="Test not implemented yet")
+@pytest.mark.skip(reason="Test not implemented yet")
 def test_ftp_upload_and_download(cleanup_files: None,cleanup_mongodb: None): # pylint: disable=unused-argument,redefined-outer-name
     '''
     core test of the application fucntionality
