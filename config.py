@@ -17,8 +17,7 @@ FTP_PASSWORD = "password" # ${{ secrets.FTP_PASSWORD }}
 # Check if the code is running in a test environment
 if "GHA_TESTS" in os.environ:
     # Use localhost address for tests
-    MONGO_HOST = ("mongodb+srv://user:password@localhost/"
-    "?retryWrites=true&w=majority&appName=AtlasApp")
+    MONGO_HOST = ("mongodb://user:password@localhost")
 else:
     # Use the cloud-based MongoDB address for production
     MONGO_HOST = ("mongodb+srv://appUser:qovkm123@cluster0.qfjxdop.mongodb.net/"
