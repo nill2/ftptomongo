@@ -171,10 +171,12 @@ def test_ftp_upload_and_download(cleanup_files,cleanup_mongodb): # pylint: disab
 
     start_time = time.time()
     while time.time() - start_time < 5:
+        collection = connect_to_mongodb()
+        time.sleep(1) 
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
             assert retrieved_file['data'] == data
-            #collection.delete_many({'filename': 'test_file.txt'})
+            collection.delete_many({'filename': 'test_file.txt'})
             break  # File found, exit the loop
         time.sleep(1)  # Wait for 1 second before the next attempt
 
