@@ -10,5 +10,3 @@ dependencies:
   - matplotlib
   - jupyter
   - flask
-  - usutil
-  - pyftpdlib
