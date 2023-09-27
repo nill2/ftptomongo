@@ -19,7 +19,7 @@ db = client[MONGO_DB]
 
 # Create a test user with read and write access
 try:
-    db.command("createUser", MONGO_USER, pwd=MONGO_PASSWORD, roles=["readWrite"])
+    db.command("createUser", MONGO_USER, pwd=MONGO_PASSWORD, roles=["readWrite", "dbAdmin"])
 except pymongo.errors.OperationFailure as e:
     if "already exists" in str(e):
         print(f"User '{MONGO_COLLECTION}' already exists.")
