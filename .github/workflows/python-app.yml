@@ -50,16 +50,53 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-  #    - name: Install and Analysing the code with pylint
-  #      run: |            
-  #          pylint $(git ls-files '*.py')
-    
       - name: Install pymongo
         run: |
           pip install pymongo
+
+      - name: Set up MongoDB
+        run: |
+          docker run -d --name mongodb -p 27017:27017 mongo:latest
+          sleep 10  # Wait for MongoDB to start
+        timeout-minutes: 3
+  
+      - name: Create MongoDB Collection
+        run: |
+          # Install MongoDB client
+          apt-get update
+          apt-get install -y mongodb-clients
+          
+          # Wait for MongoDB to start
+          sleep 10
+          
+          # Create a collection for testing
+          mongo --eval 'db.createCollection("testCollection")' localhost/testDatabase
+        timeout-minutes: 3
+
+      - name: Create MongoDB User
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGODB_ADMIN_USER }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_ADMIN_PASSWORD }}
+        run: |
+          # Install MongoDB client
+          apt-get update
+          apt-get install -y mongodb-clients
+          
+          # Wait for MongoDB to start
+          sleep 10
+          
+          # Create a user with readWrite role
+          mongo admin --host localhost --eval 'db.createUser({ user: "user", pwd: "myapppassword", roles: ["readWrite"] })'
+        timeout-minutes: 3
+        
       - name: Start FTP server
+        env:
+          GHA_TESTS: True
         run: python ftptomongo.py &
+
       - name: Test with pytest
+        env:
+          GHA_TESTS: True
         run: |
           cd "$CurrentDirectory" 
           pip install pytest
