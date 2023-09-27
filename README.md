@@ -16,13 +16,13 @@ https://docs.python.org/3/installing/index.html
 
 #### Clone this repository to your local machine:
 
-'''bash
+'''shell
 git clone https://github.com/nill2/ftptomongo
 '''
 
 And run the application in the application folder
 
-'''bash
+'''shell
 python ftptomongo
 '''
 
