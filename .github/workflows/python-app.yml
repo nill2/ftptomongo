@@ -1,4 +1,4 @@
-name: Python Package using Conda
+name: Python application
 
 on: [push]
 
@@ -47,14 +47,7 @@ jobs:
       - name: Install pyftpdlib from PyPI
         run: |
           pip install pyftpdlib
-     # - name: Install dependencies
-     #   run: |
-     #     cd "$current_directory"
-     #     echo "$GITHUB_PATH"
-     #     echo "$(pwd)"
-     #     echo "$ls"
-     #     conda env update --file environment.yml --name base
-     #     conda install -c conda-forge pyftpdlib  # Install pyftpdlib
+
       - name: Lint with flake8
         run: |
           cd "$CurrentDirectory"

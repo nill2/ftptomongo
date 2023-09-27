@@ -1,3 +1,5 @@
+name: PR reviewer
+
 on:
   pull_request:
   issue_comment:
