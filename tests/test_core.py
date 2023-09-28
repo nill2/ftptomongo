@@ -14,7 +14,6 @@ import pytest
 SERVER_COMMAND = "python ftptomongo.py"
 
 #set up FTP test
-#DESTINATION_DIR = "/ftp"
 DESTINATION_DIR= "/"
 CONNECT_TIMEOUT = 35 #connect to FTP server timeout in seconds
 
@@ -116,7 +115,7 @@ def test_connect_to_mongodb():
 
 @pytest.mark.timeout(CONNECT_TIMEOUT)   # Adjust the timeout
 #@pytest.mark.skip(reason="Test not implemented yet")
-def test_ftp_upload_and_download(): # pylint: disable=unused-argument,redefined-outer-name   cleanup_files: None,cleanup_mongodb: None
+def test_ftp_upload_and_download(cleanup_files,cleanup_mongodb): # pylint: disable=unused-argument,redefined-outer-name
     '''
     core test of the application fucntionality
     checks file upload and transfer to mongodb functionality
@@ -171,17 +170,15 @@ def test_ftp_upload_and_download(): # pylint: disable=unused-argument,redefined-
 
     start_time = time.time()
     while time.time() - start_time < 5:
+        collection = connect_to_mongodb()
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
             assert retrieved_file['data'] == data
-            #collection.delete_many({'filename': 'test_file.txt'})
+            collection.delete_many({'filename': 'test_file.txt'})
             break  # File found, exit the loop
         time.sleep(1)  # Wait for 1 second before the next attempt
-
     else:
         pytest.fail("Timeout: File was not found in MongoDB within the specified timeout")
 
 if __name__ == "__main__":
     pytest.main(["-v", "tests/tests.py"])
-    #cleanup_mongodb()
-    #cleanup_files()
