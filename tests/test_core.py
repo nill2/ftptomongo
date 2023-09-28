@@ -101,7 +101,7 @@ def cleanup_mongodb(request):  # pylint: disable=redefined-outer-name
         # Connect to MongoDB
         collection = connect_to_mongodb()
         # Delete all documents with filename == 'test_file.txt'
-        collection.delete_many({'filename': 'test_file.txt'})
+        #collection.delete_many({'filename': 'test_file.txt'})
     # Register the cleanup function to be called after the test
     request.addfinalizer(cleanup_mongodb_documents)
 def test_connect_to_mongodb():
