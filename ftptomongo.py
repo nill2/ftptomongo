@@ -26,12 +26,13 @@ def connect_to_mongodb():
         client = MongoClient(MONGO_HOST, MONGO_PORT)
         my_mongo_db = client[MONGO_DB]
         collection = my_mongo_db[MONGO_COLLECTION]
-        if ERROR_LVL=="debug" :
-            print(f"Connected to MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}")
+        if ERROR_LVL == "debug":
+            print(f"Connected to MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}") # noqa
         return collection
     except ConnectionFailure as collection_error:
         print(f"Failed to connect to MongoDB: {collection_error}")
         return None
+
 
 def db_cleanup(collection):
     """
@@ -45,10 +46,11 @@ def db_cleanup(collection):
     """
     if collection is not None:  # Check if collection is not None
         collection.delete_many({})
-        if ERROR_LVL=="debug" :
+        if ERROR_LVL == "debug":
             print("Deleted all documents from MongoDB")
     else:
         print("Failed to connect to MongoDB. File not uploaded.")
+
 
 def delete_expired_data(collection, field_name, expiration_period_days):
     """
@@ -81,21 +83,23 @@ class MyHandler(FTPHandler):
     Attributes:
         authorizer: The authorizer for user authentication.
     """
-    def on_file_received(self, received_file): # pylint: disable=arguments-renamed
+
+    def on_file_received(self, received_file):  # pylint: disable=arguments-renamed
         # Upload the received file to MongoDB
         collection = connect_to_mongodb()
+        print(f"Connected to MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}")
         if collection is not None:  # Check if collection is not None
             with open(received_file, "rb") as file:
                 timestamp = datetime.now().timestamp()
                 file_data = file.read()
                 collection.insert_one({
-                "filename": os.path.basename(received_file),
-                "data": file_data,
-                "size": os.path.getsize(received_file),
-                "date": timestamp,
-                "bsonTime": datetime.now()
-                })
-                if ERROR_LVL=="debug" :
+                                    "filename": os.path.basename(received_file),
+                                    "data": file_data,
+                                    "size": os.path.getsize(received_file),
+                                    "date": timestamp,
+                                    "bsonTime": datetime.now()
+                                    })
+                if ERROR_LVL == "debug":
                     print("Uploaded"+os.path.basename(received_file)+"to MongoDB")
 
             # Clean up the expired documents in the database
@@ -104,10 +108,11 @@ class MyHandler(FTPHandler):
             # Delete the file from the FTP server
             file_to_del = os.path.join(FTP_ROOT, received_file)
             os.remove(file_to_del)
-            if ERROR_LVL=="debug" :
+            if ERROR_LVL == "debug":
                 print(f"deleted {os.path.basename(received_file)} from the FTP server")
         else:
             print("Failed to connect to MongoDB. File not uploaded.")
+
 
 def run_ftp_server():
     """
@@ -122,7 +127,7 @@ def run_ftp_server():
     authorizer = DummyAuthorizer()
     authorizer.add_user(FTP_USER, FTP_PASSWORD, FTP_ROOT, perm="elradfmw")
 
-    print("My: Starting FTP server..." + FTP_ROOT+ "\n")
+    print("My: Starting FTP server..." + FTP_ROOT + "\n")
 
     handler = MyHandler
     handler.authorizer = authorizer
@@ -134,6 +139,7 @@ def run_ftp_server():
 
     server = FTPServer(server_socket, handler)
     server.serve_forever()
+
 
 if __name__ == "__main__":
     if not os.path.exists(FTP_ROOT):
