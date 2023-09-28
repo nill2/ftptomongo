@@ -84,6 +84,7 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: python ftptomongo.py &
 
+
       - name: Test with pytest
         env:
           IS_TEST: "GHA"

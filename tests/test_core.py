@@ -183,9 +183,11 @@ def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argu
     start_time = time.time()
     while time.time() - start_time < 5:
         collection = connect_to_mongodb()
+        collection = connect_to_mongodb()
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
             assert retrieved_file['data'] == data
+            collection.delete_many({'filename': 'test_file.txt'})
             collection.delete_many({'filename': 'test_file.txt'})
             break  # File found, exit the loop
         time.sleep(1)  # Wait for 1 second before the next attempt
