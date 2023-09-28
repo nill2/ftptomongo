@@ -27,10 +27,10 @@ def connect_to_mongodb():
         my_mongo_db = client[MONGO_DB]
         collection = my_mongo_db[MONGO_COLLECTION]
         if ERROR_LVL == "debug":
-            print(f"Connected to MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}") # noqa
+            print(f"Use MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}") # noqa
         return collection
-    except ConnectionFailure as collection_error:
-        print(f"Failed to connect to MongoDB: {collection_error}")
+    except ConnectionFailure as connection_error:
+        print(f"Failed to connect to MongoDB: {connection_error}")
         return None
 
 

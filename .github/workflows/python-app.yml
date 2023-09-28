@@ -45,6 +45,7 @@ jobs:
           pip install pymongo
           pip install hvac
           pip install flake8
+          pip install pytest
       - name: Lint with flake8
         run: |
           cd "$CurrentDirectory"
