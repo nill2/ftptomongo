@@ -96,7 +96,7 @@ class MyHandler(FTPHandler):
                 "bsonTime": datetime.now()
                 })
                 if ERROR_LVL=="debug" :
-                   print("Uploaded"+os.path.basename(received_file)+"to MongoDB")# {os.path.basename(file)}
+                    print("Uploaded"+os.path.basename(received_file)+"to MongoDB")
 
             # Clean up the expired documents in the database
             expired_docs_deleted = delete_expired_data(collection, "date", 365)
