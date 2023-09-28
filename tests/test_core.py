@@ -10,12 +10,14 @@ from ftplib import FTP
 import psutil
 import pytest
 
-#set up FTP server for testing
+# set up FTP server for testing
 SERVER_COMMAND = "python ftptomongo.py"
 
-#set up FTP test
-DESTINATION_DIR= "/"
-CONNECT_TIMEOUT = 35 #connect to FTP server timeout in seconds
+# set up  test environment variables
+DESTINATION_DIR = "/"
+CONNECT_TIMEOUT = 35  # connect to FTP server timeout in seconds
+if "IS_TEST" not in os.environ:
+    os.environ['IS_TEST'] = "local"
 
 # Get the current directory of the test script
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -23,14 +25,15 @@ config_directory = os.path.join(current_directory, '..')
 print(config_directory)
 sys.path.append(config_directory)
 
-from config import FTP_PORT, FTP_USER, FTP_PASSWORD, FTP_HOST, ERROR_LVL # pylint: disable=wrong-import-position
-from ftptomongo import connect_to_mongodb # pylint: disable=wrong-import-position
+from config import FTP_PORT, FTP_USER, FTP_PASSWORD, FTP_HOST, ERROR_LVL # pylint: disable=wrong-import-position # noqa
+from ftptomongo import connect_to_mongodb  # pylint: disable=wrong-import-position  # noqa
 
 # Get the current directory
 current_directory = os.path.dirname(os.path.realpath(__file__))
 
 # Append the current directory to sys.path
 sys.path.append(current_directory)
+
 
 @pytest.fixture
 def temp_ftp_root():
@@ -39,6 +42,7 @@ def temp_ftp_root():
     '''
     with TemporaryDirectory() as temp_dir:
         yield temp_dir
+
 
 # Define a fixture for the cleanup function
 @pytest.fixture
@@ -54,6 +58,7 @@ def cleanup_files(request):  # pylint: disable=redefined-outer-name
                 os.remove(file)
     request.addfinalizer(cleanup_files_local)
 
+
 def is_ftp_server_running():
     '''
     check if the FTP server is running
@@ -63,31 +68,38 @@ def is_ftp_server_running():
             return True
     return False
 
+
 @pytest.fixture(scope="module", autouse=True)
 def start_ftp_test_server():
     '''
     start the FTP server as a subprocess to check the fuctionality of the application
     '''
     if is_ftp_server_running():
-        yield
-        return  # FTP server is already running, no need to start a new instance
+        print('FTP server is already running')
+#        yield
+#        return  # FTP server is already running, no need to start a new instance
 
     # Start the FTP server as a subprocess
-    with subprocess.Popen(SERVER_COMMAND,
-                               shell=True,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE
-                               ) as process:
+    try:
+        with subprocess.Popen(
+                            SERVER_COMMAND,
+                            shell=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE
+                            ) as process:
 
-        # Wait for the server to start (you may need to adjust the timing)
-        time.sleep(10)
+            # Wait for the server to start (you may need to adjust the timing)
+            time.sleep(10)
 
-        # Yield control to the test
-        yield
+            # Yield control to the test
+            yield
 
-        # Stop the server when the tests are done
-        process.terminate()
-        process.wait()
+            # Stop the server when the tests are done
+            process.terminate()
+            process.wait()
+    except Exception as ftp_exception:  # pylint: disable=broad-exception-caught
+        print(f"FTP server can be launched as: {ftp_exception}")
+
 
 # Define a fixture to clean up MongoDB documents
 @pytest.fixture
@@ -103,6 +115,8 @@ def cleanup_mongodb(request):  # pylint: disable=redefined-outer-name
         collection.delete_many({'filename': 'test_file.txt'})
     # Register the cleanup function to be called after the test
     request.addfinalizer(cleanup_mongodb_documents)
+
+
 def test_connect_to_mongodb():
     '''
     test the connect_to_mongodb function
@@ -113,9 +127,9 @@ def test_connect_to_mongodb():
     collection = connect_to_mongodb()
     assert collection is not None
 
+
 @pytest.mark.timeout(CONNECT_TIMEOUT)   # Adjust the timeout
-#@pytest.mark.skip(reason="Test not implemented yet")
-def test_ftp_upload_and_download(cleanup_files,cleanup_mongodb): # pylint: disable=unused-argument,redefined-outer-name
+def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argument,redefined-outer-name # noqa
     '''
     core test of the application fucntionality
     checks file upload and transfer to mongodb functionality
@@ -124,36 +138,35 @@ def test_ftp_upload_and_download(cleanup_files,cleanup_mongodb): # pylint: disab
     timeout = 5  # You can adjust this value as needed
     test_data = 'Test content'
 
-    if ERROR_LVL=="debug" :
+    if ERROR_LVL == "debug":
         print('test_ftp_upload_and_download')
 
-    #test upload and download
-
+    # test upload and download
     start_time = time.time()
     ftp_tries = 0
     ftp = FTP()
     while time.time() - start_time < CONNECT_TIMEOUT:
         try:
             ftp_tries = ftp_tries + 1
-            ftp.connect(FTP_HOST, FTP_PORT,timeout)
+            ftp.connect(FTP_HOST, FTP_PORT, timeout)
             ftp.login(user=FTP_USER, passwd=FTP_PASSWORD)
             break
-        except Exception as ftp_exception: # pylint: disable=broad-exception-caught
+        except Exception as ftp_exception:  # pylint: disable=broad-exception-caught
             print(f"Retrying ({ftp_tries}) after error: {ftp_exception}")
 
-    if ERROR_LVL=="debug" :
+    if ERROR_LVL == "debug":
         print('Connected to FTP server')
     # Simulate file upload
     with open('test_file.txt', 'w', encoding="utf8") as file:
         file.write(test_data)
-     # Specify the destination directory and file name
+    # Specify the destination directory and file name
     dest_path = f"{DESTINATION_DIR}/test_file.txt"
     with open('test_file.txt', 'rb') as file:
         try:
             ftp.storbinary(f'STOR {dest_path}', file)
-            if ERROR_LVL=="debug" :
+            if ERROR_LVL == "debug":
                 print('file uploaded to FTP server')
-        except Exception as upload_exception: # pylint: disable=broad-exception-caught
+        except Exception as upload_exception:  # pylint: disable=broad-exception-caught
             print(f"Failed upload the file  : {upload_exception}")
 
     with open('test_file.txt', 'rb') as file:
@@ -163,7 +176,6 @@ def test_ftp_upload_and_download(cleanup_files,cleanup_mongodb): # pylint: disab
     # Convert the bytes data to a string
     data_str = data.decode('utf-8')
     assert data_str == test_data
-     # Connect to MongoDB
     collection = connect_to_mongodb()
 
     assert collection is not None
@@ -171,14 +183,17 @@ def test_ftp_upload_and_download(cleanup_files,cleanup_mongodb): # pylint: disab
     start_time = time.time()
     while time.time() - start_time < 5:
         collection = connect_to_mongodb()
+        collection = connect_to_mongodb()
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
             assert retrieved_file['data'] == data
+            collection.delete_many({'filename': 'test_file.txt'})
             collection.delete_many({'filename': 'test_file.txt'})
             break  # File found, exit the loop
         time.sleep(1)  # Wait for 1 second before the next attempt
     else:
         pytest.fail("Timeout: File was not found in MongoDB within the specified timeout")
+
 
 if __name__ == "__main__":
     pytest.main(["-v", "tests/tests.py"])
