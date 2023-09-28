@@ -9,6 +9,7 @@ from tempfile import TemporaryDirectory
 from ftplib import FTP
 import psutil
 import pytest
+import pymongo
 
 #set up FTP server for testing
 SERVER_COMMAND = "python ftptomongo.py"
@@ -24,7 +25,7 @@ config_directory = os.path.join(current_directory, '..')
 print(config_directory)
 sys.path.append(config_directory)
 
-from config import FTP_PORT, FTP_USER, FTP_PASSWORD, FTP_HOST, ERROR_LVL # pylint: disable=wrong-import-position
+from config import FTP_PORT, FTP_USER, FTP_PASSWORD, FTP_HOST, ERROR_LVL, MONGO_HOST, MONGO_PORT, MONGO_DB # pylint: disable=wrong-import-position
 from ftptomongo import connect_to_mongodb # pylint: disable=wrong-import-position
 
 # Get the current directory
@@ -99,9 +100,11 @@ def cleanup_mongodb(request):  # pylint: disable=redefined-outer-name
     # Define a cleanup function
     def cleanup_mongodb_documents():
         # Connect to MongoDB
+        #client = pymongo.MongoClient(host=MONGO_HOST, port=MONGO_PORT)
+        #db = client[MONGO_DB]
         collection = connect_to_mongodb()
         # Delete all documents with filename == 'test_file.txt'
-        #collection.delete_many({'filename': 'test_file.txt'})
+        collection.delete_many({'filename': 'test_file.txt'})
     # Register the cleanup function to be called after the test
     request.addfinalizer(cleanup_mongodb_documents)
 def test_connect_to_mongodb():
