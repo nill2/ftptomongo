@@ -1,4 +1,5 @@
 name: Python application
+#description: 'Check commits with linters, unit and e2e tests'
 
 on: [push]
 
@@ -93,5 +94,4 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           cd "$CurrentDirectory" 
-          pip install pytest
           pytest 

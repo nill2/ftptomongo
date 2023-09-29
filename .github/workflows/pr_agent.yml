@@ -1,4 +1,5 @@
 name: PR reviewer
+#description: 'AI reviewer for PRs'
 
 on:
   pull_request:
