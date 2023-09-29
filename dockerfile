@@ -1,21 +1,27 @@
 # Use the official Python image as a parent image
-FROM python:3.8-slim
+FROM python:3.10
+
+# Set arguments as secrets from GHA
+ARG SECRET_FTP_USER
+ARG SECRET_FTP_PASS
+ARG SECRET_MONGO_HOST
+
 
 # Set environment variables for FTP and MongoDB configurations
 ENV FTP_HOST=localhost
 ENV FTP_PORT=2121
-ENV FTP_USER="user"
-ENV FTP_PASS="password"
-ENV FTP_ROOT="/"
-ENV MONGO_HOST="mongodb+srv://appUser:qovkm123@cluster0.qfjxdop.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp"
+ENV FTP_USER=$SECRET_FTP_USER
+ENV FTP_PASS=$SECRET_FTP_PASS
+ENV FTP_ROOT="~"
+ENV MONGO_HOST=$SECRET_MONGO_HOST
 ENV MONGO_PORT=27017
 ENV MONGO_DB="nill-home"
 ENV MONGO_COLLECTION="nill-home-photos"
 
 # Copy the Python script and requirements file into the container
-COPY ftptomongo.py /app/ftptomongo.py
-COPY config.py /app/config.py
+COPY *.py /app
 COPY requirements.txt /app/requirements.txt
+COPY environment.yml /app/environment.yml
 
 # Set the working directory to /appЗ
 WORKDIR /app
