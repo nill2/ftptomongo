@@ -1,6 +1,9 @@
 # Use the official Python image as a parent image
 FROM python:3.10
 
+# Set the working directory to /appЗ
+WORKDIR /app
+
 # Set arguments as secrets from GHA
 ARG SECRET_FTP_USER
 ARG SECRET_FTP_PASS
@@ -20,11 +23,8 @@ ENV MONGO_COLLECTION="nill-home-photos"
 
 # Copy the Python script and requirements file into the container
 COPY *.py /app
-COPY requirements.txt /app/requirements.txt
-COPY environment.yml /app/environment.yml
-
-# Set the working directory to /appЗ
-WORKDIR /app
+COPY requirements.txt /app
+COPY environment.yml /app
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
