@@ -4,16 +4,10 @@ name: Python application
 on:
   push:
     branches:
-<<<<<<< HEAD
+      - '*'
       - '!main'
-=======
-      - main
->>>>>>> main
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
