@@ -4,7 +4,11 @@ name: Python application
 on:
   push:
     branches:
+<<<<<<< HEAD
       - '!main'
+=======
+      - main
+>>>>>>> main
   workflow_dispatch:
     inputs:
       environment:
