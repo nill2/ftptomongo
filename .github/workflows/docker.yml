@@ -30,6 +30,6 @@ jobs:
     
       - name: Build and Push Docker Image
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+          echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
           docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
           docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
