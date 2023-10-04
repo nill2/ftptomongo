@@ -3,6 +3,7 @@ This script implements an FTP server that uploads files to a MongoDB database.
 """
 
 import os
+import logging
 import socket
 from datetime import datetime, timedelta
 from pyftpdlib.servers import FTPServer
@@ -12,6 +13,14 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION
 from config import FTP_USER, FTP_PASSWORD, ERROR_LVL, FTP_HOST
+
+# Configure the logger (optional)
+logging.basicConfig(
+    level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
+# Define the logger
+logger = logging.getLogger(__name__)
 
 
 def connect_to_mongodb():
@@ -27,10 +36,12 @@ def connect_to_mongodb():
         my_mongo_db = client[MONGO_DB]
         collection = my_mongo_db[MONGO_COLLECTION]
         if ERROR_LVL == "debug":
-            print(f"Use MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}") # noqa
+            logger.info(
+                f"Use MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}"
+                ) # noqa
         return collection
     except ConnectionFailure as connection_error:
-        print(f"Failed to connect to MongoDB: {connection_error}")
+        logger.error("Failed to connect to MongoDB: %s", connection_error)
         return None
 
 
@@ -47,9 +58,9 @@ def db_cleanup(collection):
     if collection is not None:  # Check if collection is not None
         collection.delete_many({})
         if ERROR_LVL == "debug":
-            print("Deleted all documents from MongoDB")
+            logger.info("Deleted all documents from MongoDB")
     else:
-        print("Failed to connect to MongoDB. File not uploaded.")
+        logger.error("Failed to connect to MongoDB. File not uploaded.")
 
 
 def delete_expired_data(collection, field_name, expiration_period_days):
@@ -87,10 +98,12 @@ class MyHandler(FTPHandler):
     def on_file_received(self, received_file):  # pylint: disable=arguments-renamed
         # Upload the received file to MongoDB
         collection = connect_to_mongodb()
-        print(f"Connected to MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}")
+        logger.info(
+            f"Connected to MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}"
+            )
         if collection is not None:  # Check if collection is not None
             with open(received_file, "rb") as file:
-                timestamp = datetime.now().timestamp()
+                timestamp = datetime.utcnow().timestamp()
                 file_data = file.read()
                 collection.insert_one({
                                     "filename": os.path.basename(received_file),
@@ -100,18 +113,18 @@ class MyHandler(FTPHandler):
                                     "bsonTime": datetime.now()
                                     })
                 if ERROR_LVL == "debug":
-                    print("Uploaded"+os.path.basename(received_file)+"to MongoDB")
+                    logger.info(f"Uploaded {os.path.basename(received_file)} to MongoDB")
 
             # Clean up the expired documents in the database
             expired_docs_deleted = delete_expired_data(collection, "date", 365)
-            print("Deleted " + str(expired_docs_deleted) + " documents")
+            logger.info(f"Deleted {str(expired_docs_deleted)} documents")
             # Delete the file from the FTP server
             file_to_del = os.path.join(FTP_ROOT, received_file)
-            os.remove(file_to_del)
+            os.unlink(file_to_del)
             if ERROR_LVL == "debug":
-                print(f"deleted {os.path.basename(received_file)} from the FTP server")
+                logger.info(f"deleted {os.path.basename(received_file)} from the FTP server")
         else:
-            print("Failed to connect to MongoDB. File not uploaded.")
+            logger.error("Failed to connect to MongoDB. File not uploaded.")
 
 
 def run_ftp_server():
@@ -127,7 +140,7 @@ def run_ftp_server():
     authorizer = DummyAuthorizer()
     authorizer.add_user(FTP_USER, FTP_PASSWORD, FTP_ROOT, perm="elradfmw")
 
-    print("My: Starting FTP server..." + FTP_ROOT + "\n")
+    logger.info(f"My: Starting FTP server...{FTP_ROOT} \n")
 
     handler = MyHandler
     handler.authorizer = authorizer
@@ -147,4 +160,4 @@ if __name__ == "__main__":
     try:
         run_ftp_server()
     except KeyboardInterrupt:
-        print("FTP server stopped.")
+        logger.info("FTP server stopped.")

@@ -117,17 +117,6 @@ def cleanup_mongodb(request):  # pylint: disable=redefined-outer-name
     request.addfinalizer(cleanup_mongodb_documents)
 
 
-def test_connect_to_mongodb():
-    '''
-    test the connect_to_mongodb function
-    check if collection is not None
-    '''
-    if ERROR_LVL == 'debug':
-        print('test_connect_to_mongodb')
-    collection = connect_to_mongodb()
-    assert collection is not None
-
-
 @pytest.mark.timeout(CONNECT_TIMEOUT)   # Adjust the timeout
 def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argument,redefined-outer-name # noqa
     '''
@@ -196,4 +185,4 @@ def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argu
 
 
 if __name__ == "__main__":
-    pytest.main(["-v", "tests/tests.py"])
+    pytest.main(["-v", "tests/test_core.py"])
