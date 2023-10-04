@@ -109,4 +109,4 @@ jobs:
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
-          pytest  '../tests/test_core.py'
+          pytest  './tests/test_core.py'
