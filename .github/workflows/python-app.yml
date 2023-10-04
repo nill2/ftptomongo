@@ -96,10 +96,10 @@ jobs:
           IS_TEST: "GHA"
           MONGO_HOST: ${{ secrets.MONGO_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}     
         run: |
           cd $CurrentDirectory
-          pytest  '../tests/test_unit.py'
+          pytest  './tests/test_unit.py'
 
           
       - name: Test e2e tests with pytest

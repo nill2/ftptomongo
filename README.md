@@ -50,6 +50,20 @@ And run the application in the application folder
 python3 ftptomongo
 ```
 
+## Testing
+
+To test the app with unit tests
+
+```shell
+pytest ./tests/test_unit.py
+```
+
+To test the app with e2e tests
+
+```shell
+pytest ./tests/test_core.py
+```
+
 ## Contributing
 
 If you want to contribute to this project, please follow these guidelines.
@@ -60,7 +74,7 @@ unit and e2e tests.
 
 On each PR to MAIN branch docker image is automatically generated and deployed to ghcr.io
 
-On each release python package is created and publiched to 
+On each release python package is created and publiched to pypi
 
 Check or run github actions [here] (https://github.com/nill2/ftptomongo/actions)
 
