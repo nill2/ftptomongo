@@ -3,8 +3,8 @@ This is a set of unit tests that will be used to test the FTP server.
 '''
 import os
 import sys
-import pytest
 from datetime import datetime, timedelta
+import pytest
 
 if "IS_TEST" not in os.environ:
     os.environ['IS_TEST'] = "local"
@@ -12,29 +12,29 @@ if "IS_TEST" not in os.environ:
 # Get the current directory of the test script
 current_directory = os.path.dirname(os.path.abspath(__file__))
 config_directory = os.path.join(current_directory, '..')
-print(config_directory)
 sys.path.append(config_directory)
 
-from config import ERROR_LVL  # noqa
-from config import MONGO_HOST, MONGO_PORT, MONGO_COLLECTION, MONGO_DB # pylint: disable=wrong-import-position  # noqa
-from ftptomongo import connect_to_mongodb, delete_expired_data   # noqa
+# Import modules from the application
+from config import ERROR_LVL  # noqa  # pylint: disable=wrong-import-position
+from config import  MONGO_DB # pylint: disable=wrong-import-position  # noqa
+from ftptomongo import connect_to_mongodb, delete_expired_data   # noqa   # pylint: disable=wrong-import-position
 
 
 @pytest.fixture
-def cleanup_mongodb(request):  # pylint: disable=redefined-outer-name
+def cleanup_testdb(request):  # pylint: disable=redefined-outer-name
     '''
     delete test data in MongoDB documents after testing
     '''
     # Define a cleanup function
-    def cleanup_mongodb_documents():
+    def cleanup_testdb_documents():
         # Connect to MongoDB
         collection = connect_to_mongodb()
         # Delete all documents with filename == 'test_file.txt'
         collection.delete_many({'filename': 'test_file.txt'})
     # Register the cleanup function to be called after the test
-    request.addfinalizer(cleanup_mongodb_documents)
+    request.addfinalizer(cleanup_testdb_documents)
 
-def test_returns_number_of_documents_deleted(cleanup_mongodb):  # pylint: disable=unused-argument,redefined-outer-name # noqa
+def test_returns_number_of_documents_deleted(cleanup_testdb):  # pylint: disable=unused-argument,redefined-outer-name # noqa
     '''
     test the delete_expired_data function
     '''
