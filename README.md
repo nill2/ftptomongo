@@ -50,14 +50,35 @@ And run the application in the application folder
 python3 ftptomongo
 ```
 
+## Testing
+
+To test the app with unit tests
+
+```shell
+pytest ./tests/test_unit.py
+```
+
+To test the app with e2e tests
+
+```shell
+pytest ./tests/test_core.py
+```
+
 ## Contributing
 
 If you want to contribute to this project, please follow these guidelines.
 
 CI is set up with Github Actions.
 On a commit it will automatically check your branch with linters (pyling and flake8)
-unit and e2e tests
+unit and e2e tests.
 
+On each PR to MAIN branch docker image is automatically generated and deployed to ghcr.io
+
+On each release python package is created and publiched to pypi
+
+Check or run github actions [here] (https://github.com/nill2/ftptomongo/actions)
+
+Explore the workflows code [here](https://github.com/nill2/ftptomongo/tree/main/.github/workflows)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
