@@ -32,19 +32,21 @@ jobs:
         id: find-version
         run: |
           # Find the existing version tag, if it exists
-          echo "existing_version=$(docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest --quiet | awk -F: '{print $2}')" >> $GITHUB_ENV
+          existing_version=$(docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest --quiet | awk -F: '{print $2}')
           
           # If the existing version tag is not empty, increase it by 0.1; otherwise, set it to 0.1
           if [ -n "$existing_version" ]; then
             new_version=$(awk "BEGIN { printf \"%.2f\", $existing_version + 0.1 }")
           else
             new_version="0.1"
+            existing_version="0.0"
           fi
 
           # Output the new version
           echo "new_version:$new_version"
           echo "existing_version:$existing_version"
           echo "new_version=$new_version" >> $GITHUB_ENV
+          echo "existing_version=$existing_version" >> $GITHUB_ENV
 
         
         continue-on-error: true
@@ -55,13 +57,13 @@ jobs:
           echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
           # docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
           docker buildx build \
-          --tag ftptomongo:latest \
           --tag ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest \
-          --tag ftptomongo:$new_version \
+          --tag ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:$new_version \
           --file Dockerfile \
           .
-          docker push ftptomongo:latest 
-      
+          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+          #docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
+          $docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest      
       
       - name:  Delete Existing Version
         id: delete-old-version
