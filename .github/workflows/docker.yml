@@ -18,13 +18,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Build Docker Image
-        run: |
-          docker buildx create --use
-          docker buildx build \
-            --tag ftptomongo:latest \
-            --file Dockerfile \
-            .
+      #- name: Build Docker Image
+      #  run: |
+      #    docker buildx create --use
+      #    docker buildx build \
+      #      --tag ftptomongo:latest \
+      #      --file Dockerfile \
+      #      .
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
 
@@ -32,7 +32,7 @@ jobs:
         id: find-version
         run: |
           # Find the existing version tag, if it exists
-          existing_version=$(docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest --quiet | awk -F: '{print $2}')
+          echo "existing_version=$(docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest --quiet | awk -F: '{print $2}')" >> $GITHUB_ENV
           
           # If the existing version tag is not empty, increase it by 0.1; otherwise, set it to 0.1
           if [ -n "$existing_version" ]; then
@@ -42,7 +42,9 @@ jobs:
           fi
 
           # Output the new version
-          echo "::set-output name=new_version::$new_version"
+          echo "new_version::$new_version"
+          echo "existing_version::$existing_version"
+
         
         continue-on-error: true
     
