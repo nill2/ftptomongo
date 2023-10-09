@@ -42,14 +42,16 @@ jobs:
           fi
 
           # Output the new version
-          echo "new_version::$new_version"
-          echo "existing_version::$existing_version"
+          echo "new_version:$new_version"
+          echo "existing_version:$existing_version"
+          echo "new_version=$new_version" >> $GITHUB_ENV
 
         
         continue-on-error: true
     
       - name: Build and Push Docker Image
         run: |
+          echo "existing_version::$existing_version and new_version:$new_version"
           echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
           # docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
           docker buildx build \
@@ -67,4 +69,6 @@ jobs:
           # If the existing version tag is found, delete it
           if [ -n "$existing_version" ]; then
             docker rmi $existing_version
+          else
+            echo "No existing version tag found"
           fi
