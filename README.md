@@ -76,11 +76,10 @@ On each PR to MAIN branch docker image is automatically generated and deployed t
 
 On each release python package is created and publiched to pypi
 
-
 Check or run github actions [here](https://github.com/nill2/ftptomongo/actions)
 
-
 Explore the workflows code [here](https://github.com/nill2/ftptomongo/tree/main/.github/workflows)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
