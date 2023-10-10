@@ -66,7 +66,6 @@ jobs:
           docker buildx build \
             --label version=$new_version \
             --tag ftptomongo:latest \
-          #  --tag ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest \
             --file Dockerfile \
             .
 
