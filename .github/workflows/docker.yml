@@ -33,7 +33,7 @@ jobs:
            
           # Find the existing version label, if it exists
           existing_version_label=$(docker inspect --format '{{ index .Config.Labels "version" }}' ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest)
-          echo "existing_version_label: $existing_version_label"
+          #echo "existing_version_label: $existing_version_label"
 
           # If the existing version label is not empty, increase it by 0.01; otherwise, set it to 0.01
           if [ -n "$existing_version_label" ]; then
