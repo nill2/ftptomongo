@@ -22,10 +22,10 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           PROJECT_ID: smooth-verve-400915
 
-      - name: Check if Google Cloud project exists
-        run: |
-          gcloud projects describe $PROJECT_ID || terraform apply -var="project_id=$PROJECT_ID" -var="location=europe-west1" -var="zone=europe-west1-b" -var="machine_type=g1-small" path/to/terraform/directory
-        continue-on-error: true
+      #- name: Check if Google Cloud project exists
+      #  run: |
+      #    gcloud projects describe $PROJECT_ID || terraform apply -var="project_id=$PROJECT_ID" -var="location=europe-west1" -var="zone=europe-west1-b" -var="machine_type=g1-small" path/to/terraform/directory
+      #  continue-on-error: true
 
       - name: Configure Docker
         uses: actions/setup-python@v2
@@ -40,10 +40,9 @@ jobs:
       - name: Deploy latest image
         run: |
           # Pull the latest image from GHCR.io
-          docker pull ghcr.io/yourusername/yourimage:latest
+          docker pull ghcr.io/nill2/ftptomongo:latest
 
-          # Replace 'your-service-name' with the name of your service in Google Cloud
-          gcloud run deploy your-service-name \
+          gcloud run deploy ftptomongo-cluster \
             --image ghcr.io/nill2/ftptomongo:latest \
             --platform managed \
             --region europe-west1 \
