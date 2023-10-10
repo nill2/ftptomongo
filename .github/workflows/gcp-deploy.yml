@@ -37,20 +37,25 @@ jobs:
       #    pip install docker-compose
       #    docker-compose --version
 
-      - name: Install gcloud
-        run: |
-          gcloud components install
-          gcloud components update
-
-
-      - name: Deploy latest image
+      #- name: Install gcloud
+      #  run: |
+      #    gcloud components install
+      #    gcloud components update
+      
+      - name: pull docker image from external repository and push it ot gcr.io
         run: |
           # Pull the latest image from GHCR.io
           echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-          docker pull ghcr.io/nill2/ftptomongo:latest
+          docker pull nill2/ftptomongo:latest
 
+          docker tag nill2/ftptomongo:latest gcr.io/smooth-verve-400915/nill2/ftptomongo:latest
+          gcloud auth configure-docker
+          docker push gcr.io/smooth-verve-400915/nill2/ftptomongo:latest
+
+      - name: Deploy latest image
+        run: |
           gcloud run deploy ftptomongo-cluster \
-            --image ghcr.io/nill2/ftptomongo:latest \
+            --image gcr.io/smooth-verve-400915/nill2/ftptomongo:latest \
             --platform managed \
             --region europe-west1 \
             --allow-unauthenticated
