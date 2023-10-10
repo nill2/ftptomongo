@@ -72,5 +72,5 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-          docker build -t ftptomongo:latest:latest .
+          docker build -t ftptomongo:latest .
           docker push ftptomongo:latest
