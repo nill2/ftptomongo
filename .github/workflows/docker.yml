@@ -32,19 +32,23 @@ jobs:
           echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
            
           # Find the existing version label, if it exists
-          existing_version_label=$(docker inspect --format '{{ index .Config.Labels "version" }}' ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest)
-          #echo "existing_version_label: $existing_version_label"
+          if docker inspect --format '{{ index .Config.Labels "version" }}' ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest &> /dev/null; then
+            existing_version_label=$(docker inspect --format '{{ index .Config.Labels "version" }}' ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest)
+            #echo "existing_version_label: $existing_version_label"
 
-          # If the existing version label is not empty, increase it by 0.01; otherwise, set it to 0.01
-          if [ -n "$existing_version_label" ]; then
-            new_version=$(echo "$existing_version_label + 0.01" | bc)
-            # Format the new version to have two decimal places
-            new_version=$(printf "%.2f" $new_version)
+            # If the existing version label is not empty, increase it by 0.01; otherwise, set it to 0.01
+            if [ -n "$existing_version_label" ]; then
+              new_version=$(echo "$existing_version_label + 0.01" | bc)
+              # Format the new version to have two decimal places
+              new_version=$(printf "%.2f" $new_version)
+            else
+              new_version="0.01"
+              existing_version_label="0.00"
+            fi
           else
             new_version="0.01"
             existing_version_label="0.00"
           fi
-
           # Output the new version
           echo "new_version:$new_version"
           echo "existing_version:$existing_version_label"
