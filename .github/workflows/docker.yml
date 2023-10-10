@@ -32,7 +32,7 @@ jobs:
           echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
 
           # Find the existing version tag, if it exists
-          existing_version=$(docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest --quiet | awk -F: '{print $1}')
+          existing_version=$(docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest --quiet | awk -F: '{print $3}')
           echo "existing_version found:$existing_version"
           # If the existing version tag is not empty, increase it by 0.01; otherwise, set it to 0.01
           if [ -n "$existing_version" ]; then
