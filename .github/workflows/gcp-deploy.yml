@@ -40,6 +40,7 @@ jobs:
       - name: Deploy latest image
         run: |
           # Pull the latest image from GHCR.io
+          echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
           docker pull ghcr.io/nill2/ftptomongo:latest
 
           gcloud run deploy ftptomongo-cluster \
