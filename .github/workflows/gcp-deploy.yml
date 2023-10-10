@@ -1,0 +1,50 @@
+name: Deploy to Google Cloud
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Upload Python Package"] 
+  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: '343.0.0'
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          PROJECT_ID: smooth-verve-400915
+
+      - name: Check if Google Cloud project exists
+        run: |
+          gcloud projects describe $PROJECT_ID || terraform apply -var="project_id=$PROJECT_ID" -var="location=europe-west1" -var="zone=europe-west1-b" -var="machine_type=g1-small" path/to/terraform/directory
+        continue-on-error: true
+
+      - name: Configure Docker
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Docker Compose
+        run: |
+          pip install docker-compose
+          docker-compose --version
+
+      - name: Deploy latest image
+        run: |
+          # Pull the latest image from GHCR.io
+          docker pull ghcr.io/yourusername/yourimage:latest
+
+          # Replace 'your-service-name' with the name of your service in Google Cloud
+          gcloud run deploy your-service-name \
+            --image ghcr.io/nill2/ftptomongo:latest \
+            --platform managed \
+            --region europe-west1 \
+            --allow-unauthenticated
