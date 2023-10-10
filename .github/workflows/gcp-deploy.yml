@@ -32,10 +32,10 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install Docker Compose
-        run: |
-          pip install docker-compose
-          docker-compose --version
+      #- name: Install Docker Compose
+      #  run: |
+      #    pip install docker-compose
+      #    docker-compose --version
 
       - name: Deploy latest image
         run: |
