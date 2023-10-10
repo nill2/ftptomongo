@@ -37,6 +37,12 @@ jobs:
       #    pip install docker-compose
       #    docker-compose --version
 
+      - name: Install gcloud
+        run: |
+          gcloud components install
+          gcloud components update
+
+
       - name: Deploy latest image
         run: |
           # Pull the latest image from GHCR.io
