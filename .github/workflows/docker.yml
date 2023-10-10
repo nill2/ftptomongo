@@ -33,15 +33,15 @@ jobs:
 
           # Find the existing version tag, if it exists
           existing_version=$(docker pull ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest --quiet | awk -F: '{print $2}')
-          
-          # If the existing version tag is not empty, increase it by 0.1; otherwise, set it to 0.1
+          echo "existing_version found:$existing_version"
+          # If the existing version tag is not empty, increase it by 0.01; otherwise, set it to 0.01
           if [ -n "$existing_version" ]; then
-            new_version=$(echo "$existing_version + 0.1" | bc)
+            new_version=$(echo "$existing_version + 0.01" | bc)
             # Format the new version to have two decimal places
             new_version=$(printf "%.2f" $new_version)
           else
-            new_version="0.1"
-            existing_version="0.0"
+            new_version="0.01"
+            existing_version="0.00"
           fi
 
           # Output the new version
@@ -73,14 +73,4 @@ jobs:
           # Push both "latest" and "testtag" tags to the registry
           docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:$new_version    
-      
-      # commented out for now to keep all version    
-      #- name:  Delete Existing Version
-      #  id: delete-old-version
-      #  run: |
-      #    # If the existing version tag is found, delete it
-      #    if [ -n "$existing_version" ]; then
-      #      docker rmi $existing_version
-      #    else
-      #      echo "No existing version tag found"
-      #    fi
+    
