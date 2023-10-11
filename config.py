@@ -6,9 +6,18 @@ import os
 import subprocess
 
 # FTP server configuration
-FTP_ROOT = os.path.expanduser("~")
-FTP_PORT = 2121
-FTP_HOST = os.getenv("FTP_HOST", "localhost")
+FTP_ROOT = os.getenv("FTP_ROOT",os.path.expanduser("./"))
+print("FTP_ROOT: "+ FTP_ROOT)
+FTP_PORT_STR = os.getenv("FTP_PORT", "")
+
+# Check if the string is empty or not
+if FTP_PORT_STR:
+    # Convert the string to an integer if it's not empty
+    FTP_PORT = int(FTP_PORT_STR)
+else:
+    # Use a default value (e.g., 2121) if the string is empty or not set
+    FTP_PORT = 2121
+FTP_HOST = "0.0.0.0"
 
 # MongoDB configuration
 MONGO_HOST = "localhost"

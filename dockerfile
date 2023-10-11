@@ -8,19 +8,45 @@ WORKDIR /app
 ARG SECRET_FTP_USER
 ARG SECRET_FTP_PASS
 ARG SECRET_MONGO_HOST
+ARG SECRET_FTP_PORT
 
+# Check it arguments were specified
+RUN if [ -z "$SECRET_FTP_USER" ]; then \
+      echo "MY_ARG was not provided during the build"; \
+      SECRET_FTP_USER="user"; \
+    else \
+      echo "MY_ARG was provided with the value: $SECRET_FTP_USER"; \
+    fi
+RUN if [ -z "$SECRET_FTP_PASS" ]; then \
+      echo "MY_ARG was not provided during the build"; \
+      SECRET_FTP_PASS="password"; \
+    else \
+      echo "MY_ARG was provided with the value: $SECRET_FTP_PASS"; \
+    fi
+RUN if [ -z "$SECRET_MONGO_HOST" ]; then \
+      echo "MY_ARG was not provided during the build"; \
+      SECRET_MONGO_HOST="localhost"; \
+    else \
+      echo "MY_ARG was provided with the value: $SECRET_MONGO_HOST"; \
+    fi
+RUN if [ -z "$SECRET_FTP_PORT" ]; then \
+      echo "MY_ARG was not provided during the build"; \
+      SECRET_FTP_PORT=2121; \
+    else \
+      echo "MY_ARG was provided with the value: $SECRET_FTP_PORT"; \
+    fi
 
 # Set environment variables for FTP and MongoDB configurations
-ENV FTP_HOST=localhost
-ENV FTP_PORT=2121
+ENV FTP_HOST=0.0.0.0
+ENV FTP_PORT=$SECRET_FTP_PORT
 ENV PORT 2121
 ENV FTP_USER=$SECRET_FTP_USER
 ENV FTP_PASS=$SECRET_FTP_PASS
-ENV FTP_ROOT="~"
+ENV FTP_ROOT="./ftp"
 ENV MONGO_HOST=$SECRET_MONGO_HOST
 ENV FTP_USER=$SECRET_FTP_USER
 ENV FTP_PASS=$SECRET_FTP_PASS
-ENV FTP_ROOT="~"
+ENV FTP_ROOT="./ftp"
 ENV MONGO_HOST=$SECRET_MONGO_HOST
 ENV MONGO_PORT=27017
 ENV MONGO_DB="nill-home"
@@ -35,7 +61,10 @@ COPY environment.yml /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose FTP and passive mode ports (e.g., 21 and 60000-60100)
-EXPOSE $FTP_PORT 60000-60100
+EXPOSE 60000-60100
+EXPOSE $FTP_PORT
+
+EXPOSE 2121
 
 # Run the Python script
 CMD ["python", "ftptomongo.py"]
