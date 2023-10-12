@@ -37,6 +37,7 @@ RUN if [ -z "$SECRET_FTP_PORT" ]; then \
     else \
       echo "SECRET_FTP_PORT was provided with the value: $SECRET_FTP_PORT"; \
     fi
+    
 RUN if [ -z "$IS_TEST" ]; then \
       echo "IS_TEST was not provided during the build = we create prod"; \
       IS_TEST="prod"; \
