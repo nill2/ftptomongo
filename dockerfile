@@ -37,12 +37,12 @@ RUN if [ -z "$SECRET_FTP_PORT" ]; then \
     else \
       echo "SECRET_FTP_PORT was provided with the value: $SECRET_FTP_PORT"; \
     fi
+    
 RUN if [ -z "$IS_TEST" ]; then \
       echo "IS_TEST was not provided during the build = we create prod"; \
-      IS_TEST = "prod" \
+      IS_TEST="prod"; \
     else \
       echo "IS_TEST was provided with the value: $IS_TEST"; \
-
     fi
 
 ENV IS_TEST=$IS_TEST
@@ -50,10 +50,6 @@ ENV IS_TEST=$IS_TEST
 ENV FTP_HOST=0.0.0.0
 ENV FTP_PORT=$SECRET_FTP_PORT
 ENV PORT 2121
-ENV FTP_USER=$SECRET_FTP_USER
-ENV FTP_PASS=$SECRET_FTP_PASS
-ENV FTP_ROOT="./ftp"
-ENV MONGO_HOST=$SECRET_MONGO_HOST
 ENV FTP_USER=$SECRET_FTP_USER
 ENV FTP_PASS=$SECRET_FTP_PASS
 ENV FTP_ROOT="./ftp"
