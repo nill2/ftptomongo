@@ -6,8 +6,10 @@ import os
 import subprocess
 
 # FTP server configuration
+
 FTP_ROOT = os.getenv("FTP_ROOT",os.path.expanduser("./"))
 print("FTP_ROOT: "+ FTP_ROOT)
+
 FTP_PORT_STR = os.getenv("FTP_PORT", "")
 
 # Check if the string is empty or not
@@ -18,6 +20,7 @@ else:
     # Use a default value (e.g., 2121) if the string is empty or not set
     FTP_PORT = 2121
 FTP_HOST = "0.0.0.0"
+
 
 # MongoDB configuration
 MONGO_HOST = "localhost"
@@ -40,11 +43,18 @@ if "IS_TEST" in os.environ:
         MONGO_HOST = "localhost"
         print("You are running in a GHA test environment: "+MONGO_HOST)
     else:
-        print("You are running in a local test environment: "+MONGO_HOST)
-    ERROR_LVL = "debug"
-    MONGO_DB = "nill-test"
-    FTP_USER = "user"
-    FTP_PASSWORD = "password"
+        if os.environ.get('IS_TEST') == "prod":
+            MONGO_DB = "nill-home"
+            ERROR_LVL = "production"
+            FTP_USER = os.getenv("FTP_USER", "user")
+            FTP_PASSWORD = os.getenv("FTP_PASSWORD", "password")
+            print("You are running in a prod environment: " + MONGO_HOST)
+        else:    
+            print("You are running in a local test environment: "+MONGO_HOST)
+            ERROR_LVL = "debug"
+            MONGO_DB = "nill-test"
+            FTP_USER = "user"
+            FTP_PASSWORD = "password"
 else:
     MONGO_DB = "nill-home"
     ERROR_LVL = "production"

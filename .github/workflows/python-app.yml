@@ -96,7 +96,8 @@ jobs:
           IS_TEST: "GHA"
           MONGO_HOST: ${{ secrets.MONGO_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}     
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_PORT: ${{ secrets.FTP_PORT }}     
         run: |
           cd $CurrentDirectory
           pytest  './tests/test_unit.py'

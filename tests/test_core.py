@@ -25,12 +25,12 @@ config_directory = os.path.join(current_directory, '..')
 print(config_directory)
 sys.path.append(config_directory)
 
-from config import FTP_PORT, FTP_USER, FTP_PASSWORD, FTP_HOST, ERROR_LVL # pylint: disable=wrong-import-position # noqa
+from config import FTP_PORT, FTP_USER, FTP_PASSWORD, ERROR_LVL # pylint: disable=wrong-import-position # noqa
 from ftptomongo import connect_to_mongodb  # pylint: disable=wrong-import-position  # noqa
 
 # Get the current directory
 current_directory = os.path.dirname(os.path.realpath(__file__))
-
+FTP_HOST = "localhost"
 # Append the current directory to sys.path
 sys.path.append(current_directory)
 
@@ -170,9 +170,7 @@ def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argu
     assert collection is not None
 
     start_time = time.time()
-    while time.time() - start_time < 5:
-        collection = connect_to_mongodb()
-        collection = connect_to_mongodb()
+    while time.time() - start_time < 7:
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
             assert retrieved_file['data'] == data

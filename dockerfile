@@ -10,32 +10,42 @@ ARG SECRET_FTP_PASS
 ARG SECRET_MONGO_HOST
 ARG SECRET_FTP_PORT
 
+ARG IS_TEST
+
 # Check it arguments were specified
 RUN if [ -z "$SECRET_FTP_USER" ]; then \
-      echo "MY_ARG was not provided during the build"; \
+      echo "SECRET_FTP_USER was not provided during the build"; \
       SECRET_FTP_USER="user"; \
     else \
-      echo "MY_ARG was provided with the value: $SECRET_FTP_USER"; \
+      echo "SECRET_FTP_USER was provided with the value: $SECRET_FTP_USER"; \
     fi
 RUN if [ -z "$SECRET_FTP_PASS" ]; then \
-      echo "MY_ARG was not provided during the build"; \
+      echo "SECRET_FTP_PASS was not provided during the build"; \
       SECRET_FTP_PASS="password"; \
     else \
-      echo "MY_ARG was provided with the value: $SECRET_FTP_PASS"; \
+      echo "SECRET_FTP_PASS was provided with the value: $SECRET_FTP_PASS"; \
     fi
 RUN if [ -z "$SECRET_MONGO_HOST" ]; then \
-      echo "MY_ARG was not provided during the build"; \
+      echo "SECRET_MONGO_HOST was not provided during the build"; \
       SECRET_MONGO_HOST="localhost"; \
     else \
-      echo "MY_ARG was provided with the value: $SECRET_MONGO_HOST"; \
+      echo "SECRET_MONGO_HOST was provided with the value: $SECRET_MONGO_HOST"; \
     fi
 RUN if [ -z "$SECRET_FTP_PORT" ]; then \
-      echo "MY_ARG was not provided during the build"; \
+      echo "SECRET_FTP_PORT was not provided during the build"; \
       SECRET_FTP_PORT=2121; \
     else \
-      echo "MY_ARG was provided with the value: $SECRET_FTP_PORT"; \
+      echo "SECRET_FTP_PORT was provided with the value: $SECRET_FTP_PORT"; \
+    fi
+RUN if [ -z "$IS_TEST" ]; then \
+      echo "IS_TEST was not provided during the build = we create prod"; \
+      IS_TEST = "prod" \
+    else \
+      echo "IS_TEST was provided with the value: $IS_TEST"; \
+
     fi
 
+ENV IS_TEST=$IS_TEST
 # Set environment variables for FTP and MongoDB configurations
 ENV FTP_HOST=0.0.0.0
 ENV FTP_PORT=$SECRET_FTP_PORT
@@ -61,10 +71,10 @@ COPY environment.yml /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose FTP and passive mode ports (e.g., 21 and 60000-60100)
-EXPOSE 60000-60100
+
+EXPOSE 52000-52050
 EXPOSE $FTP_PORT
 
-EXPOSE 2121
 
 # Run the Python script
 CMD ["python", "ftptomongo.py"]
