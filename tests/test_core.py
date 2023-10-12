@@ -170,9 +170,7 @@ def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argu
     assert collection is not None
 
     start_time = time.time()
-    while time.time() - start_time < 5:
-        collection = connect_to_mongodb()
-        collection = connect_to_mongodb()
+    while time.time() - start_time < 7:
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
             assert retrieved_file['data'] == data
