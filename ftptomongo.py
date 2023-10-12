@@ -144,7 +144,7 @@ def run_ftp_server():
 
     # Define the passive port range (e.g., 52000-60000)
     passive_ports = range(52000, 52050)
-    
+
     handler = MyHandler
     handler.authorizer = authorizer
     handler.passive_ports = passive_ports
