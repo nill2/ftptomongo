@@ -9,6 +9,7 @@ ARG SECRET_FTP_USER
 ARG SECRET_FTP_PASS
 ARG SECRET_MONGO_HOST
 ARG SECRET_FTP_PORT
+
 ARG IS_TEST
 
 # Check it arguments were specified
@@ -41,6 +42,7 @@ RUN if [ -z "$IS_TEST" ]; then \
       IS_TEST = "prod" \
     else \
       echo "IS_TEST was provided with the value: $IS_TEST"; \
+
     fi
 
 ENV IS_TEST=$IS_TEST
@@ -69,8 +71,10 @@ COPY environment.yml /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose FTP and passive mode ports (e.g., 21 and 60000-60100)
-#EXPOSE 52000-52050
+
+EXPOSE 52000-52050
 EXPOSE $FTP_PORT
+
 
 # Run the Python script
 CMD ["python", "ftptomongo.py"]
