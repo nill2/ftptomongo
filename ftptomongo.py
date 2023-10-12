@@ -142,8 +142,12 @@ def run_ftp_server():
 
     logger.info(f"My: Starting FTP server...{FTP_ROOT} \n")
 
+    # Define the passive port range (e.g., 52000-60000)
+    passive_ports = range(52000, 52050)
+    
     handler = MyHandler
     handler.authorizer = authorizer
+    handler.passive_ports = passive_ports
 
     # Explicitly bind the socket to the desired host and port
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
