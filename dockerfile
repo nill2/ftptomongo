@@ -20,6 +20,7 @@ ARG IS_TEST="prod"
 #      echo "no /run/secrets/SECRET_FTP_USER"; \
 #    fi
 
+
 #RUN if [ -f /run/secrets/SECRET_FTP_PASS ]; then \
 #      SECRET_FTP_PASS=$(cat /run/secrets/SECRET_FTP_PASS); \
 #    fi
@@ -45,7 +46,9 @@ RUN echo "IS_TEST=$IS_TEST"
 # Set environment variables for FTP and MongoDB configurations
 ENV FTP_HOST=0.0.0.0
 ENV FTP_PORT=$SECRET_FTP_PORT
+
 ENV PORT $SECRET_FTP_PORT
+
 ENV FTP_USER=$SECRET_FTP_USER
 ENV FTP_PASS=$SECRET_FTP_PASS
 ENV FTP_ROOT="./ftp"
