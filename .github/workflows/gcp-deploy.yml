@@ -22,44 +22,32 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           PROJECT_ID: smooth-verve-400915
 
-
-      - name: Check if Google Cloud project exists
-        run: |
-          gcloud projects describe $PROJECT_ID || terraform apply -var="project_id=$PROJECT_ID" -var="location=europe-west1" -var="zone=europe-west1-b" -var="machine_type=g1-small" path/to/terraform/directory
-        continue-on-error: true
-
       - name: Configure Docker
         uses: actions/setup-python@v2
         with:
           python-version: '3.7'
 
-      #- name: Install Docker Compose
-      #  run: |
-      #    pip install docker-compose
-      #    docker-compose --version
-
-      #- name: Install gcloud
-      #  run: |
-      #    gcloud components install
-      #    gcloud components update
-      
-      - name: pull docker image from external repository and push it ot gcr.io
+      - name: Pull Docker image
         run: |
-          # Pull the latest image from GHCR.io
-          echo ${{ secrets.GH_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
           docker pull nill2/ftptomongo:latest
-
           docker tag nill2/ftptomongo:latest gcr.io/smooth-verve-400915/nill2/ftptomongo:latest
-          gcloud auth configure-docker
-          gcloud components update
-          docker push gcr.io/smooth-verve-400915/nill2/ftptomongo:latest
+          echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} | gcloud auth activate-service-account --key-file=-
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
-      - name: Deploy latest image
+      - name: Configure Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: '343.0.0'
+        env:
+          PROJECT_ID: smooth-verve-400915
+
+      - name: Deploy image to Google Cloud Run
         run: |
           gcloud run deploy ftptomongo-cluster \
             --image gcr.io/smooth-verve-400915/nill2/ftptomongo:latest \
             --platform managed \
-            --port=${{ secrets.FTP_PORT }} \
             --region europe-west1 \
-            --allow-unauthenticated 
-           
+            --port=2121 \
+            --allow-unauthenticated
+          
