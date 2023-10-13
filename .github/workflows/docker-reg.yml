@@ -52,3 +52,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            "SECRET_FTP_USER = ${{ secrets.FTP_USER }}"
+            "SECRET_FTP_PASS= ${{ secrets.FTP_PASSWORD }}"
+            "SECRET_MONGO_HOST = ${{ secrets.MONGO_HOST }}"
+            "SECRET_FTP_PORT = ${{ secrets.FTP_PORT }}"
