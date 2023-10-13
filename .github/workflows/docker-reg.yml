@@ -68,9 +68,9 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |
-            "SECRET_FTP_USER_GHA = ${{ secrets.FTP_USER }}"
-            "SECRET_FTP_PASS_GHA = ${{ secrets.FTP_PASSWORD }}"
-            "SECRET_MONGO_HOST_GHA = ${{ secrets.MONGO_HOST }}"
+            "SECRET_FTP_USER = ${{ secrets.FTP_USER }}"
+            "SECRET_FTP_PASS = ${{ secrets.FTP_PASSWORD }}"
+            "SECRET_MONGO_HOST = ${{ secrets.MONGO_HOST }}"
             "SECRET_FTP_PORT_GHA = ${{ secrets.FTP_PORT }}"
        
             
