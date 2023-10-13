@@ -44,6 +44,17 @@ jobs:
           registry: quay.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.QUAY_PASSWORD }}
+      - name: Debug secrets
+        run: |
+          echo "FTP_USER: ${{ secrets.FTP_USER }}"
+          echo "FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}"
+          echo "MONGO_HOST: ${{ secrets.MONGO_HOST }}"
+          echo "FTP_PORT: ${{ secrets.FTP_PORT }}"
+        env:
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          MONGO_HOST: ${{ secrets.MONGO_HOST }}
+          FTP_PORT: ${{ secrets.FTP_PORT }}
       - name: Build and push
         uses: docker/build-push-action@v2
         env:
@@ -52,3 +63,17 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # test this option as well
+          #secrets: |
+          #  "SECRET_FTP_USER = ${{ secrets.FTP_USER }}"
+          #  "SECRET_FTP_PASS = ${{ secrets.FTP_PASSWORD }}"
+          #  "SECRET_MONGO_HOST = ${{ secrets.MONGO_HOST }}"
+          #  "SECRET_FTP_PORT_GHA = ${{ secrets.FTP_PORT }}"
+          build-args: |
+            SECRET_FTP_USER=${{ secrets.FTP_USER }}
+            SECRET_FTP_PASS=${{ secrets.FTP_PASSWORD }}
+            SECRET_MONGO_HOST=${{ secrets.MONGO_HOST }}
+            SECRET_FTP_PORT=${{ secrets.FTP_PORT }}
+      
+       
+            

@@ -50,6 +50,7 @@ jobs:
 
           docker tag nill2/ftptomongo:latest gcr.io/smooth-verve-400915/nill2/ftptomongo:latest
           gcloud auth configure-docker
+          gcloud components update
           docker push gcr.io/smooth-verve-400915/nill2/ftptomongo:latest
 
       - name: Deploy latest image
