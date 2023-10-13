@@ -14,24 +14,23 @@ ARG SECRET_FTP_PORT="2121"
 ARG IS_TEST="prod"
 
 # Check if secrets are provided and use them
-RUN if [ -f /run/secrets/SECRET_FTP_USER ]; then \
-      SECRET_FTP_USER=$(cat /run/secrets/SECRET_FTP_USER); \
-      echo "SECRET_FTP_USER(assign): $SECRET_FTP_USER"; \
-    else \
-      echo "no /run/secrets/SECRET_FTP_USER"; \
-    fi
+#RUN if [ -f /run/secrets/SECRET_FTP_USER ]; then \
+#      SECRET_FTP_USER=$(cat /run/secrets/SECRET_FTP_USER); \
+#    else \
+#      echo "no /run/secrets/SECRET_FTP_USER"; \
+#    fi
 
-RUN if [ -f /run/secrets/SECRET_FTP_PASS ]; then \
-      SECRET_FTP_PASS=$(cat /run/secrets/SECRET_FTP_PASS); \
-    fi
+#RUN if [ -f /run/secrets/SECRET_FTP_PASS ]; then \
+#      SECRET_FTP_PASS=$(cat /run/secrets/SECRET_FTP_PASS); \
+#    fi
 
-RUN if [ -f /run/secrets/SECRET_MONGO_HOST ]; then \
-      SECRET_MONGO_HOST=$(cat /run/secrets/SECRET_MONGO_HOST); \
-    fi
+#RUN if [ -f /run/secrets/SECRET_MONGO_HOST ]; then \
+#      SECRET_MONGO_HOST=$(cat /run/secrets/SECRET_MONGO_HOST); \
+#    fi
 
-RUN if [ -f /run/secrets/SECRET_FTP_PORT ]; then \
-      SECRET_FTP_PORT=$(cat /run/secrets/SECRET_FTP_PORT); \
-    fi
+#RUN if [ -f /run/secrets/SECRET_FTP_PORT ]; then \
+#      SECRET_FTP_PORT=$(cat /run/secrets/SECRET_FTP_PORT); \
+#    fi
 
 # Output the secrets for debugging
 RUN echo "SECRET_FTP_USER: $SECRET_FTP_USER"; \
@@ -41,6 +40,8 @@ RUN echo "SECRET_FTP_USER: $SECRET_FTP_USER"; \
     
 
 ENV IS_TEST=$IS_TEST
+
+RUN echo "IS_TEST=$IS_TEST"
 # Set environment variables for FTP and MongoDB configurations
 ENV FTP_HOST=0.0.0.0
 ENV FTP_PORT=$SECRET_FTP_PORT
