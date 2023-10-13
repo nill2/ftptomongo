@@ -72,5 +72,11 @@ jobs:
             "SECRET_FTP_PASS = ${{ secrets.FTP_PASSWORD }}"
             "SECRET_MONGO_HOST = ${{ secrets.MONGO_HOST }}"
             "SECRET_FTP_PORT_GHA = ${{ secrets.FTP_PORT }}"
+          build-args: |
+            SECRET_FTP_USER=${{ secrets.FTP_USER }}
+            SECRET_FTP_PASS=${{ secrets.FTP_PASSWORD }}
+            SECRET_MONGO_HOST=${{ secrets.MONGO_HOST }}
+            SECRET_FTP_PORT=${{ secrets.FTP_PORT }}
+      
        
             
