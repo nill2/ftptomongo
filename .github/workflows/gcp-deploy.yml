@@ -22,6 +22,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           PROJECT_ID: smooth-verve-400915
 
+
       - name: Check if Google Cloud project exists
         run: |
           gcloud projects describe $PROJECT_ID || terraform apply -var="project_id=$PROJECT_ID" -var="location=europe-west1" -var="zone=europe-west1-b" -var="machine_type=g1-small" path/to/terraform/directory
@@ -30,7 +31,7 @@ jobs:
       - name: Configure Docker
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: '3.7'
 
       #- name: Install Docker Compose
       #  run: |
@@ -58,6 +59,7 @@ jobs:
           gcloud run deploy ftptomongo-cluster \
             --image gcr.io/smooth-verve-400915/nill2/ftptomongo:latest \
             --platform managed \
-            --port=2121 \
+            --port=${{ secrets.FTP_PORT }} \
             --region europe-west1 \
-            --allow-unauthenticated
+            --allow-unauthenticated 
+           
