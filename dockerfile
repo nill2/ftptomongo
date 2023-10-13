@@ -16,6 +16,9 @@ ARG IS_TEST="prod"
 # Check if secrets are provided and use them
 RUN if [ -f /run/secrets/SECRET_FTP_USER ]; then \
       SECRET_FTP_USER=$(cat /run/secrets/SECRET_FTP_USER); \
+      echo "SECRET_FTP_USER(assign): $SECRET_FTP_USER"; \
+    else \
+      echo "no /run/secrets/SECRET_FTP_USER"; \
     fi
 
 RUN if [ -f /run/secrets/SECRET_FTP_PASS ]; then \
