@@ -45,7 +45,7 @@ if "IS_TEST" in os.environ:
     else:
         if os.environ.get('IS_TEST') == "prod":
             MONGO_DB = "nill-home"
-            ERROR_LVL = "production"
+            ERROR_LVL = "debug"
             FTP_USER = os.getenv("FTP_USER", "user")
             FTP_PASSWORD = os.getenv("FTP_PASSWORD", "password")
             print("You are running in a prod environment: " + MONGO_HOST)
@@ -63,3 +63,5 @@ else:
     print("You are running in a prod environment: " + MONGO_HOST)
 MONGO_PORT = 27017
 MONGO_COLLECTION = "nill-home-photos"
+FTP_PASSIVE_PORT_FROM = 52000
+FTP_PASSIVE_PORT_TO = 52050
