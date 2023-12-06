@@ -12,7 +12,7 @@ from pyftpdlib.handlers import FTPHandler
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION
-from config import FTP_USER, FTP_PASSWORD, ERROR_LVL, FTP_HOST
+from config import FTP_USER, FTP_PASSWORD, ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO
 
 # Configure the logger (optional)
 logging.basicConfig(
@@ -143,7 +143,7 @@ def run_ftp_server():
     logger.info(f"My: Starting FTP server...{FTP_ROOT} \n")
 
     # Define the passive port range (e.g., 52000-60000)
-    passive_ports = range(52000, 52050)
+    passive_ports = range(FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO)
 
     handler = MyHandler
     handler.authorizer = authorizer

@@ -10,6 +10,8 @@ MONGO_DB = 'nill-home'
 MONGO_COLLECTION = 'nill-home-photos'
 MONGO_USER = 'user'
 MONGO_PASSWORD = 'password'
+FTP_PASSIVE_PORT_FROM = 52000
+FTP_PASSIVE_PORT_TO = 52050
 
 # Create a MongoDB client
 client = pymongo.MongoClient(host=MONGO_HOST, port=MONGO_PORT)
