@@ -102,19 +102,31 @@ class MyHandler(FTPHandler):
             f"Connected to MongoDB: {MONGO_HOST}:{MONGO_PORT}/{MONGO_DB}/{MONGO_COLLECTION}"
             )
         if collection is not None:  # Check if collection is not None
-            with open(received_file, "rb") as file:
-                timestamp = datetime.utcnow().timestamp()
-                file_data = file.read()
-                collection.insert_one({
-                                    "filename": os.path.basename(received_file),
-                                    "data": file_data,
-                                    "size": os.path.getsize(received_file),
-                                    "date": timestamp,
-                                    "bsonTime": datetime.now()
-                                    })
-                if ERROR_LVL == "debug":
-                    logger.info(f"Uploaded {os.path.basename(received_file)} to MongoDB")
+            try:
+                with open(received_file, "rb") as file:
+                    timestamp = datetime.utcnow().timestamp()
+                    file_data = file.read()
+                    collection.insert_one({
+                                        "filename": os.path.basename(received_file),
+                                        "data": file_data,
+                                        "size": os.path.getsize(received_file),
+                                        "date": timestamp,
+                                        "bsonTime": datetime.now()
+                                        })
+                    if ERROR_LVL == "debug":
+                        logger.info(f"Uploaded {os.path.basename(received_file)} to MongoDB")
+            except FileNotFoundError:
+                # Handle the case where the file is not found
+                print("Error: The specified file was not found.")
 
+            except PermissionError:
+                # Handle the case where the script doesn't have permission to open the file
+                print("Error: Permission denied to open the file.")
+
+            except Exception as e:
+                # Handle other types of exceptions
+                print(f"An unexpected error occurred: {e}")
+                
             # Clean up the expired documents in the database
             expired_docs_deleted = delete_expired_data(collection, "date", 365)
             logger.info(f"Deleted {str(expired_docs_deleted)} documents")
