@@ -140,7 +140,7 @@ def run_ftp_server():
     authorizer = DummyAuthorizer()
     authorizer.add_user(FTP_USER, FTP_PASSWORD, FTP_ROOT, perm="elradfmw")
 
-    logger.info(f"My: Starting FTP server...{FTP_ROOT} \n")
+    logger.info(f"My: Starting FTP server...{FTP_ROOT} and ports {FTP_PASSIVE_PORT_FROM} - {FTP_PASSIVE_PORT_TO} \n")
 
     # Define the passive port range (e.g., 52000-60000)
     passive_ports = range(FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO)
