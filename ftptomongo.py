@@ -11,8 +11,8 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from config import FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION
-from config import FTP_USER, FTP_PASSWORD, ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO
+from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION
+from config import FTP_PASSWORD, ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO
 
 # Configure the logger (optional)
 logging.basicConfig(
@@ -118,15 +118,13 @@ class MyHandler(FTPHandler):
             except FileNotFoundError:
                 # Handle the case where the file is not found
                 print("Error: The specified file was not found.")
-
             except PermissionError:
                 # Handle the case where the script doesn't have permission to open the file
                 print("Error: Permission denied to open the file.")
-
-            except Exception as e:
+            except Exception as exception:  # pylint: disable=W0718
                 # Handle other types of exceptions
-                print(f"An unexpected error occurred: {e}")
-                
+                print(f"An unexpected error occurred: {exception}")
+
             # Clean up the expired documents in the database
             expired_docs_deleted = delete_expired_data(collection, "date", 365)
             logger.info(f"Deleted {str(expired_docs_deleted)} documents")
@@ -152,7 +150,8 @@ def run_ftp_server():
     authorizer = DummyAuthorizer()
     authorizer.add_user(FTP_USER, FTP_PASSWORD, FTP_ROOT, perm="elradfmw")
 
-    logger.info(f"My: Starting FTP server...{FTP_ROOT} and ports {FTP_PASSIVE_PORT_FROM} - {FTP_PASSIVE_PORT_TO} \n")
+    logger.info(f"FTP server:{FTP_ROOT}"
+                f"and ports {FTP_PASSIVE_PORT_FROM} - {FTP_PASSIVE_PORT_TO}")
 
     # Define the passive port range (e.g., 52000-60000)
     passive_ports = range(FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO)

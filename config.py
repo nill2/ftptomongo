@@ -7,8 +7,8 @@ import subprocess
 
 # FTP server configuration
 
-FTP_ROOT = os.getenv("FTP_ROOT",os.path.expanduser("./"))
-print("FTP_ROOT: "+ FTP_ROOT)
+FTP_ROOT = os.getenv("FTP_ROOT", os.path.expanduser("./"))
+print("FTP_ROOT: " + FTP_ROOT)
 
 FTP_PORT_STR = os.getenv("FTP_PORT", "")
 
@@ -49,7 +49,7 @@ if "IS_TEST" in os.environ:
             FTP_USER = os.getenv("FTP_USER", "user")
             FTP_PASSWORD = os.getenv("FTP_PASSWORD", "password")
             print("You are running in a prod environment: " + MONGO_HOST)
-        else:    
+        else:
             print("You are running in a local test environment: "+MONGO_HOST)
             ERROR_LVL = "debug"
             MONGO_DB = "nill-test"
