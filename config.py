@@ -11,7 +11,11 @@ FTP_ROOT = os.getenv("FTP_ROOT", os.path.expanduser("./"))
 print("FTP_ROOT: " + FTP_ROOT)
 
 FTP_PORT_STR = os.getenv("FTP_PORT", "")
-ERROR_LVL = "production"
+ERROR_LVL = "debug"
+MONGO_DB = "nill-test"
+FTP_USER = "user"
+FTP_PASSWORD = "password"
+
 # Check if the string is empty or not
 if FTP_PORT_STR:
     # Convert the string to an integer if it's not empty
