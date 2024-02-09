@@ -58,9 +58,9 @@ ENV MONGO_DB="nill-home"
 ENV MONGO_COLLECTION="nill-home-photos"
 
 # Copy the Python script and requirements file into the container
-COPY *.py /app
-COPY requirements.txt /app
-COPY environment.yml /app
+COPY *.py /app/
+COPY requirements.txt /app/
+COPY environment.yml /app/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
