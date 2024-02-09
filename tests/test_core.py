@@ -118,7 +118,7 @@ def cleanup_mongodb(request):  # pylint: disable=redefined-outer-name
 
 
 @pytest.mark.timeout(CONNECT_TIMEOUT)   # Adjust the timeout
-@pytest.mark.skip(reason="Skipping this test until fixed")
+#@pytest.mark.skip(reason="Skipping this test until fixed")
 def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argument,redefined-outer-name # noqa
     '''
     core test of the application fucntionality
