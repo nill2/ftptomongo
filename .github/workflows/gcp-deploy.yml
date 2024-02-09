@@ -47,7 +47,7 @@ jobs:
           gcloud run deploy ftptomongo-cluster \
             --image gcr.io/smooth-verve-400915/nill2/ftptomongo:latest \
             --platform managed \
-            --region europe-west1 \
+            --region europe-west4 \
             --port=${{secrets.FTP_PORT}}} \
             --allow-unauthenticated
           
