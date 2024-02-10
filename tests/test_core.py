@@ -14,7 +14,7 @@ import pytest
 SERVER_COMMAND = "python ftptomongo.py"
 
 # set up  test environment variables
-DESTINATION_DIR = "/"
+DESTINATION_DIR = "."
 CONNECT_TIMEOUT = 35  # connect to FTP server timeout in seconds
 if "IS_TEST" not in os.environ:
     os.environ['IS_TEST'] = "local"

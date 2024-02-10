@@ -15,6 +15,7 @@ ERROR_LVL = "debug"
 MONGO_DB = "nill-test"
 FTP_USER = "user"
 FTP_PASSWORD = "password"
+IS_TEST = ""
 
 # Check if the string is empty or not
 if FTP_PORT_STR:
