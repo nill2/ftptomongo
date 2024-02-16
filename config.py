@@ -7,7 +7,7 @@ import subprocess
 
 # FTP server configuration
 
-FTP_ROOT = os.getenv("FTP_ROOT", os.path.expanduser("./"))
+FTP_ROOT = os.getenv("FTP_ROOT", os.path.expanduser('~'))
 print("FTP_ROOT: " + FTP_ROOT)
 
 FTP_PORT_STR = os.getenv("FTP_PORT", "")
