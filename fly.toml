@@ -1,0 +1,20 @@
+# fly.toml app configuration file generated for ftptomongo-withered-night-9826 on 2024-02-16T16:24:46+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'ftptomongo-withered-night-9826'
+primary_region = 'ams'
+
+[build]
+
+[http_service]
+  internal_port = 52000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  size = 'shared-cpu-1x'
