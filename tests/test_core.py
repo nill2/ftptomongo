@@ -25,8 +25,8 @@ config_directory = os.path.join(current_directory, '..')
 print(config_directory)
 sys.path.append(config_directory)
 
-from config import FTP_PORT, FTP_USER, FTP_PASSWORD, ERROR_LVL # pylint: disable=wrong-import-position # noqa
-from ftptomongo import connect_to_mongodb  # pylint: disable=wrong-import-position  # noqa
+from config import FTP_PORT, FTP_USER, FTP_PASSWORD, ERROR_LVL # pylint: disable=all # noqa
+from ftptomongo import connect_to_mongodb  # pylint: disable=all  # noqa
 
 # Get the current directory
 current_directory = os.path.dirname(os.path.realpath(__file__))
@@ -117,8 +117,9 @@ def cleanup_mongodb(request):  # pylint: disable=redefined-outer-name
     request.addfinalizer(cleanup_mongodb_documents)
 
 
+# Key e2e tests
 @pytest.mark.timeout(CONNECT_TIMEOUT)   # Adjust the timeout
-#@pytest.mark.skip(reason="Skipping this test until fixed")
+# @pytest.mark.skip(reason="Skipping this test until fixed")
 def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argument,redefined-outer-name # noqa
     '''
     core test of the application fucntionality

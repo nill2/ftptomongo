@@ -1,4 +1,6 @@
-# __init__.py
+"""
+This module initializes the package and provides access to its main functionality.
+"""
 
 # Import symbols from ftptomongo module
 from .ftptomongo import run_ftp_server

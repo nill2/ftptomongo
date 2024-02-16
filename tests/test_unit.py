@@ -15,9 +15,9 @@ config_directory = os.path.join(current_directory, '..')
 sys.path.append(config_directory)
 
 # Import modules from the application
-from config import ERROR_LVL  # noqa  # pylint: disable=wrong-import-position
-from config import  MONGO_DB # pylint: disable=wrong-import-position  # noqa
-from ftptomongo import connect_to_mongodb, delete_expired_data   # noqa   # pylint: disable=wrong-import-position
+from config import ERROR_LVL  # noqa  # pylint: disable=all
+from config import  MONGO_DB # pylint: disable=all  # noqa
+from ftptomongo import connect_to_mongodb, delete_expired_data   # noqa   # pylint: disable=all
 
 
 @pytest.fixture

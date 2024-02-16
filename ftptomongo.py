@@ -3,32 +3,19 @@ This script implements an FTP server that uploads files to a MongoDB database.
 """
 
 import os
+# import sys
 import logging
 import socket
-#import ftptomongo.config
-#from . import config
 from datetime import datetime, timedelta
 from pyftpdlib.servers import FTPServer
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
+from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST  # pylint: disable=import-error
+from config import MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_PASSWORD  # pylint: disable=import-error
+from config import ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO  # pylint: disable=import-error
 
-
-#FTP_USER = config.FTP_USER
-#FTP_ROOT = config.FTP_ROOT
-#MONGO_HOST = config.MONGO_HOST
-#MONGO_PORT = config.MONGO_PORT
-#MONGO_DB = config.MONGO_DB
-#MONGO_COLLECTION = config.MONGO_COLLECTION
-#FTP_PASSWORD = config.FTP_PASSWORD
-#ERROR_LVL = config.ERROR_LVL
-#FTP_HOST = config.FTP_HOST
-#FTP_PASSIVE_PORT_FROM = config.FTP_PASSIVE_PORT_FROM
-#FTP_PASSIVE_PORT_TO = config.FTP_PASSIVE_PORT_TO
-
-from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION
-from config import FTP_PASSWORD, ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO
 
 # Configure the logger (optional)
 logging.basicConfig(
@@ -185,11 +172,11 @@ def run_ftp_server():
     server.serve_forever()
 
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    if FTP_ROOT == "":
 #        current_directory = os.getcwd()
-#        print("Current Working Directory:", current_directory)  
-##        FTP_ROOT=current_directory
+#        print("Current Working Directory:", current_directory)
+#        FTP_ROOT=current_directory
 #    if not os.path.exists(FTP_ROOT):
 #        os.makedirs(FTP_ROOT)
 #    try:
