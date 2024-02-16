@@ -3,6 +3,7 @@ This script implements an FTP server that uploads files to a MongoDB database.
 """
 
 import os
+# import sys
 import logging
 import socket
 from datetime import datetime, timedelta
@@ -11,8 +12,10 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST, MONGO_PORT, MONGO_DB, MONGO_COLLECTION
-from config import FTP_PASSWORD, ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO
+from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST  # pylint: disable=import-error
+from config import MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_PASSWORD  # pylint: disable=import-error
+from config import ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO  # pylint: disable=import-error
+
 
 # Configure the logger (optional)
 logging.basicConfig(
@@ -169,10 +172,14 @@ def run_ftp_server():
     server.serve_forever()
 
 
-if __name__ == "__main__":
-    if not os.path.exists(FTP_ROOT):
-        os.makedirs(FTP_ROOT)
-    try:
-        run_ftp_server()
-    except KeyboardInterrupt:
-        logger.info("FTP server stopped.")
+# if __name__ == "__main__":
+#    if FTP_ROOT == "":
+#        current_directory = os.getcwd()
+#        print("Current Working Directory:", current_directory)
+#        FTP_ROOT=current_directory
+#    if not os.path.exists(FTP_ROOT):
+#        os.makedirs(FTP_ROOT)
+#    try:
+#        run_ftp_server()
+#    except KeyboardInterrupt:
+#        logger.info("FTP server stopped.")

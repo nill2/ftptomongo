@@ -88,7 +88,7 @@ jobs:
           MONGO_HOST: ${{ secrets.MONGO_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        run: python ftptomongo.py &
+        run: python __main__.py &
 
 
       - name: Test unit tests with pytest
