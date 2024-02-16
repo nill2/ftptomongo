@@ -11,7 +11,7 @@ import psutil
 import pytest
 
 # set up FTP server for testing
-SERVER_COMMAND = "python ftptomongo.py"
+SERVER_COMMAND = "python __main__.py"
 
 # set up  test environment variables
 DESTINATION_DIR = "."
@@ -81,6 +81,7 @@ def start_ftp_test_server():
 
     # Start the FTP server as a subprocess
     try:
+        print('FTP is not running. Starting a new one')
         with subprocess.Popen(
                             SERVER_COMMAND,
                             shell=True,
