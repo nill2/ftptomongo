@@ -47,7 +47,7 @@ Install pytest (if you want run unit or e2e tests) and other tools
 And run the application in the application folder
 
 ```shell
-python3 ftptomongo
+python3 __main__
 ```
 
 ## Testing
