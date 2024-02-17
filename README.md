@@ -11,6 +11,8 @@ also played with CI to make the process smooth and created unit and integrations
 #### Prerequisites
 
 Installed [python](https://docs.python.org/3/installing/index.html) with dependencies...
+Installed [pip3](https://pip.pypa.io/en/stable/installation/) 
+Installed [git](https://github.com/git-guides/install-git)
 
 #### Clone this repository to your local machine
 
@@ -21,7 +23,7 @@ git clone https://github.com/nill2/ftptomongo
 Install reqirements
 
 ```shell
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Install [hashicorp vaults](https://developer.hashicorp.com/vault/tutorials/hcp-vault-secrets-get-started/hcp-vault-secrets-install-cli)
