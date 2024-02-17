@@ -68,7 +68,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Expose FTP and passive mode ports (e.g., 21 and 60000-60100)
 
 EXPOSE $FTP_PORT
-EXPOSE 52000-52050
+EXPOSE 52000-52003
 
 # Run the Python script
 CMD ["python", "__main__.py"]
