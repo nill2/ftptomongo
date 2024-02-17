@@ -31,6 +31,7 @@ FTP_HOST = "0.0.0.0"
 MONGO_HOST = "localhost"
 if "MONGO_HOST" in os.environ:
     MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
+    print("Getting from env vars"+MONGO_HOST)
 else:
     try:
         # Run the vlt command and capture its output

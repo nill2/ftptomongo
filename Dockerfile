@@ -61,6 +61,7 @@ ENV MONGO_COLLECTION="nill-home-photos"
 COPY *.py /app/
 COPY requirements.txt /app/
 COPY environment.yml /app/
+COPY *.pem /app/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
