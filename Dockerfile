@@ -5,6 +5,9 @@ FROM python:3.10
 # Set the working directory to /appЗ
 WORKDIR /app
 
+# Creating a folder for FTP
+RUN mkdir -p /root/camera
+
 # Set arguments as secrets from GHA
 # Define default values for secrets (when building locally)
 ARG SECRET_FTP_USER="user"

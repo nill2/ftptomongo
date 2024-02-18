@@ -5,7 +5,7 @@ This script implements an FTP server that uploads files to a MongoDB database.
 import os
 # import sys
 import logging
-import socket
+import requests
 from datetime import datetime, timedelta
 from pyftpdlib.servers import FTPServer
 from pyftpdlib.authorizers import DummyAuthorizer
@@ -24,6 +24,22 @@ logging.basicConfig(
 
 # Define the logger
 logger = logging.getLogger(__name__)
+
+
+def get_external_ip():
+    """
+    Identify the external IP address
+    Returns:
+        string: external IP address
+    """
+    try:
+        response = requests.get('https://api.ipify.org', timeout=10)
+        if response.status_code == 200:
+            return response.text
+        else:
+            print(f"Failed to retrieve external IP: {response.status_code}")
+    except Exception as e:  # pylint: disable=all
+        print(f"An error occurred: {e}")
 
 
 def connect_to_mongodb():
@@ -162,24 +178,15 @@ def run_ftp_server():
     handler = MyHandler
     handler.authorizer = authorizer
     handler.passive_ports = passive_ports
+    external_ip = get_external_ip()
+    if external_ip:
+        print("External IP: {}".format(external_ip))
+        handler.masquerade_address = external_ip
 
     # Explicitly bind the socket to the desired host and port
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((FTP_HOST, FTP_PORT))  # Adjust host and port as needed
-    server_socket.listen(5)  # Start listening for incoming connections
+    # server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # server_socket.bind((FTP_HOST, FTP_PORT))  # Adjust host and port as needed
+    # server_socket.listen(5)  # Start listening for incoming connections
 
-    server = FTPServer(server_socket, handler)
+    server = FTPServer((FTP_HOST, FTP_PORT), handler)  # server_socket
     server.serve_forever()
-
-
-# if __name__ == "__main__":
-#    if FTP_ROOT == "":
-#        current_directory = os.getcwd()
-#        print("Current Working Directory:", current_directory)
-#        FTP_ROOT=current_directory
-#    if not os.path.exists(FTP_ROOT):
-#        os.makedirs(FTP_ROOT)
-#    try:
-#        run_ftp_server()
-#    except KeyboardInterrupt:
-#        logger.info("FTP server stopped.")
