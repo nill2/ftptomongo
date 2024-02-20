@@ -95,9 +95,13 @@ def delete_expired_data(collection, field_name, expiration_period_h):
         int: The number of documents deleted.
     """
     # Calculate the expiration date as a datetime object
-    expiration_date = datetime.utcnow() - timedelta(hours=expiration_period_h) #  timedelta(days=expiration_period_days)
+    expiration_date = datetime.utcnow() - timedelta(hours=expiration_period_h)
+    logger.info("expiration_hour: %s" % expiration_period_h)
+    logger.info("Deleting expired before: %s" % expiration_date)
+    # expiration_date_stamp=expiration_date.timestamp()
     # Create a filter to find documents older than the expiration date
     del_filter = {field_name: {"$lt": expiration_date}}
+    logger.info("deletion filter: %s" % del_filter)
     # Delete the expired documents and get the count of deleted documents
     result = collection.delete_many(del_filter)
     return result.deleted_count
@@ -145,7 +149,7 @@ class MyHandler(FTPHandler):
                 print(f"An unexpected error occurred: {exception}")
 
             # Clean up the expired documents in the database
-            expired_docs_deleted = delete_expired_data(collection, "date", 365)
+            expired_docs_deleted = delete_expired_data(collection, "bsonTime", HOURS_KEEP)
             logger.info(f"Deleted {str(expired_docs_deleted)} documents")
             # Delete the file from the FTP server
             file_to_del = os.path.join(FTP_ROOT, received_file)
