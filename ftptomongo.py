@@ -12,7 +12,7 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST  # pylint: disable=import-error
+from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST, HOURS_KEEP  # pylint: disable=import-error
 from config import MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_PASSWORD  # pylint: disable=import-error
 from config import ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO  # pylint: disable=import-error
 
@@ -82,7 +82,7 @@ def db_cleanup(collection):
         logger.error("Failed to connect to MongoDB. File not uploaded.")
 
 
-def delete_expired_data(collection, field_name, expiration_period_days):
+def delete_expired_data(collection, field_name, expiration_period_h):
     """
     Deletes documents from the collection that are older than a specified expiration period.
 
@@ -95,7 +95,7 @@ def delete_expired_data(collection, field_name, expiration_period_days):
         int: The number of documents deleted.
     """
     # Calculate the expiration date as a datetime object
-    expiration_date = datetime.utcnow() - timedelta(days=expiration_period_days)
+    expiration_date = datetime.utcnow() - timedelta(hours=expiration_period_h) #  timedelta(days=expiration_period_days)
     # Create a filter to find documents older than the expiration date
     del_filter = {field_name: {"$lt": expiration_date}}
     # Delete the expired documents and get the count of deleted documents

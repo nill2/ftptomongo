@@ -16,6 +16,7 @@ MONGO_DB = "nill-test"
 FTP_USER = "user"
 FTP_PASSWORD = "password"
 IS_TEST = ""
+HOURS_KEEP = 15
 
 # Check if the string is empty or not
 if FTP_PORT_STR:
