@@ -72,3 +72,33 @@ MONGO_PORT = 27017
 MONGO_COLLECTION = "nill-home-photos"
 FTP_PASSIVE_PORT_FROM = 52000
 FTP_PASSIVE_PORT_TO = 52003
+
+AWS_ACCESS_KEY_ID = None
+if "AWS_ACCESS" in os.environ:
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS", None)
+    print("Getting AWS_ACCESS_KEY_ID from env vars: "+AWS_ACCESS_KEY_ID)
+else:
+    try:
+        # Run the vlt command and capture its output
+        VLT_COMMAND = "vlt secrets get --plaintext AWS_ACCESS_KEY_ID"
+        AWS_ACCESS_KEY_ID = subprocess.check_output(VLT_COMMAND, shell=True, text=True)
+        print("Value from hashicorp for MONGO_HOST: "+str(AWS_ACCESS_KEY_ID))
+    except subprocess.CalledProcessError as hashi_e:
+        # Handle errors, e.g., if the secret does not exist
+        print(f"Error: {hashi_e}")
+
+AWS_SECRET_KEY = None
+if "AWS_SECRET_KEY" in os.environ:
+    AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY", None)
+    print("Getting AWS_SECRET_KEY from env vars: "+AWS_SECRET_KEY)
+else:
+    try:
+        # Run the vlt command and capture its output
+        VLT_COMMAND = "vlt secrets get --plaintext AWS_SECRET_KEY"
+        AWS_SECRET_KEY = subprocess.check_output(VLT_COMMAND, shell=True, text=True)
+        print("Value from hashicorp for MONGO_HOST: "+str(AWS_SECRET_KEY))
+    except subprocess.CalledProcessError as hashi_e:
+        # Handle errors, e.g., if the secret does not exist
+        print(f"Error: {hashi_e}")
+
+AWS_BUCKET_NAME = "nill-home-photos"
