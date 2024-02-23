@@ -103,7 +103,7 @@ def delete_expired_data(collection, field_name, expiration_period_h):
     # Create a filter to find documents older than the expiration date
     del_filter = {field_name: {"$lt": expiration_date}}
     logger.info("deletion filter: %s" % del_filter)
-    
+
     # Delete the expired documents and get the count of deleted documents
     result = collection.find(del_filter)
 
@@ -117,12 +117,13 @@ def delete_expired_data(collection, field_name, expiration_period_h):
             s3_file_url = doc["s3_file_url"]
             # Delete the file from the S3 bucket
             delete_s3_file(s3_file_url)
-            
+
         # Delete the MongoDB document
         collection.delete_one({"_id": doc["_id"]})
         deleted_count += 1
 
     return deleted_count
+
 
 def delete_s3_file(s3_file_url):
     """
@@ -135,10 +136,10 @@ def delete_s3_file(s3_file_url):
         # Extract bucket name and key from the S3 file URL
         bucket_name = s3_file_url.split("//")[1].split(".")[0]
         s3_key = s3_file_url.split(bucket_name + ".s3.amazonaws.com/")[1]
-        
+
         # Create an S3 client
         s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_KEY)
-        
+
         # Delete the file from the S3 bucket
         s3.delete_object(Bucket=bucket_name, Key=s3_key)
         logger.info(f"Deleted file from S3: {s3_file_url}")
