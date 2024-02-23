@@ -100,13 +100,50 @@ def delete_expired_data(collection, field_name, expiration_period_h):
     expiration_date = datetime.utcnow() - timedelta(hours=expiration_period_h)
     logger.info("expiration_hour: %s" % expiration_period_h)
     logger.info("Deleting expired before: %s" % expiration_date)
-    # expiration_date_stamp=expiration_date.timestamp()
     # Create a filter to find documents older than the expiration date
     del_filter = {field_name: {"$lt": expiration_date}}
     logger.info("deletion filter: %s" % del_filter)
+    
     # Delete the expired documents and get the count of deleted documents
-    result = collection.delete_many(del_filter)
-    return result.deleted_count
+    result = collection.find(del_filter)
+
+    # Initialize counter for deleted documents
+    deleted_count = 0
+
+    for doc in result:
+        # Check if the document has a non-empty "s3_file_url" field
+        if doc.get("s3_file_url"):
+            # Extract the S3 file URL from the document
+            s3_file_url = doc["s3_file_url"]
+            # Delete the file from the S3 bucket
+            delete_s3_file(s3_file_url)
+            
+        # Delete the MongoDB document
+        collection.delete_one({"_id": doc["_id"]})
+        deleted_count += 1
+
+    return deleted_count
+
+def delete_s3_file(s3_file_url):
+    """
+    Deletes a file from an S3 bucket based on its URL.
+
+    Args:
+        s3_file_url (str): The URL of the file in the S3 bucket.
+    """
+    try:
+        # Extract bucket name and key from the S3 file URL
+        bucket_name = s3_file_url.split("//")[1].split(".")[0]
+        s3_key = s3_file_url.split(bucket_name + ".s3.amazonaws.com/")[1]
+        
+        # Create an S3 client
+        s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_KEY)
+        
+        # Delete the file from the S3 bucket
+        s3.delete_object(Bucket=bucket_name, Key=s3_key)
+        logger.info(f"Deleted file from S3: {s3_file_url}")
+    except Exception as e:
+        logger.error(f"Error deleting file from S3: {e}")
 
 
 class MyHandler(FTPHandler):
