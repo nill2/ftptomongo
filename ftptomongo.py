@@ -3,10 +3,11 @@ This script implements an FTP server that uploads files to a MongoDB database.
 """
 
 import os
-# import sys
+import boto3
 import logging
 import requests
 from datetime import datetime, timedelta
+from botocore.exceptions import ClientError  # Import ClientError
 from pyftpdlib.servers import FTPServer
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
@@ -15,6 +16,7 @@ from pymongo.errors import ConnectionFailure
 from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST, HOURS_KEEP  # pylint: disable=import-error
 from config import MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_PASSWORD  # pylint: disable=import-error
 from config import ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO  # pylint: disable=import-error
+from config import AWS_ACCESS_KEY_ID, AWS_SECRET_KEY, AWS_BUCKET_NAME  # pylint: disable=import-error
 
 
 # Configure the logger (optional)
@@ -119,6 +121,23 @@ class MyHandler(FTPHandler):
     """
 
     def on_file_received(self, received_file):  # pylint: disable=arguments-renamed
+        """
+        key function that on a file_received event will save it to the database(MongoDB)
+        in future to a s3 with a link stored in the MongoDB
+        """
+        s3_file_url = ""
+        try:
+            # Upload the received file to AWS S3
+            s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_KEY)
+            # AWS_bucket_name = 'nill-home-photos'
+            s3_key = os.path.basename(received_file)
+            s3.upload_file(received_file, AWS_BUCKET_NAME, s3_key)
+
+            # Get the S3 file URL
+            s3_file_url = f"https://{AWS_BUCKET_NAME}.s3.amazonaws.com/{s3_key}"
+        except ClientError as e:
+            print(f"Error uploading file to S3: {e}")
+
         # Upload the received file to MongoDB
         collection = connect_to_mongodb()
         logger.info(
@@ -132,6 +151,7 @@ class MyHandler(FTPHandler):
                     collection.insert_one({
                                         "filename": os.path.basename(received_file),
                                         "data": file_data,
+                                        "s3_file_url": s3_file_url,
                                         "size": os.path.getsize(received_file),
                                         "date": timestamp,
                                         "bsonTime": datetime.now()
@@ -183,7 +203,7 @@ def run_ftp_server():
     handler.authorizer = authorizer
     handler.passive_ports = passive_ports
     external_ip = get_external_ip()
-    if external_ip:
+    if external_ip and MONGO_DB != "nill-test":
         print("External IP: {}".format(external_ip))
         handler.masquerade_address = external_ip
 
