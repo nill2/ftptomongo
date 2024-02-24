@@ -76,9 +76,8 @@ def start_ftp_test_server():
     '''
     if is_ftp_server_running():
         print('FTP server is already running')
-#        yield
+        return
 #        return  # FTP server is already running, no need to start a new instance
-
     # Start the FTP server as a subprocess
     try:
         print('FTP is not running. Starting a new one')
