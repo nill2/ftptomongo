@@ -64,7 +64,7 @@ def is_ftp_server_running():
     check if the FTP server is running
     '''
     for process in psutil.process_iter(attrs=['name']):
-        if process.info['name'] == 'python' and 'ftptomongo.py' in process.cmdline():
+        if process.info['name'] == 'python' and '__main__.py' in process.cmdline():
             return True
     return False
 
@@ -76,30 +76,30 @@ def start_ftp_test_server():
     '''
     if is_ftp_server_running():
         print('FTP server is already running')
-#        yield
-#        return  # FTP server is already running, no need to start a new instance
+        yield
+        # FTP server is already running, no need to start a new instance
+    else:
+        # Start the FTP server as a subprocess
+        try:
+            print('FTP is not running. Starting a new one')
+            with subprocess.Popen(
+                                SERVER_COMMAND,
+                                shell=True,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE
+                                ) as process:
 
-    # Start the FTP server as a subprocess
-    try:
-        print('FTP is not running. Starting a new one')
-        with subprocess.Popen(
-                            SERVER_COMMAND,
-                            shell=True,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE
-                            ) as process:
+                # Wait for the server to start (you may need to adjust the timing)
+                time.sleep(10)
 
-            # Wait for the server to start (you may need to adjust the timing)
-            time.sleep(10)
+                # Yield control to the test
+                yield
 
-            # Yield control to the test
-            yield
-
-            # Stop the server when the tests are done
-            process.terminate()
-            process.wait()
-    except Exception as ftp_exception:  # pylint: disable=broad-exception-caught
-        print(f"FTP server can be launched as: {ftp_exception}")
+                # Stop the server when the tests are done
+                process.terminate()
+                process.wait()
+        except Exception as ftp_exception:  # pylint: disable=broad-exception-caught
+            print(f"FTP server can be launched as: {ftp_exception}")
 
 
 # Define a fixture to clean up MongoDB documents

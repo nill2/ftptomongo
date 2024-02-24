@@ -53,6 +53,7 @@ jobs:
           pip install flake8
           pip install pytest
           pip install boto3
+          pip install -r  requirements.txt
       - name: Lint with flake8
         run: |
           cd "$CurrentDirectory"
@@ -90,7 +91,7 @@ jobs:
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_ACCESS: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
         run: python __main__.py &
 
 
@@ -102,7 +103,7 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}    
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_ACCESS: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }} 
         run: |
           cd $CurrentDirectory
           pytest  './tests/test_unit.py'
@@ -114,5 +115,7 @@ jobs:
           MONGO_HOST: ${{ secrets.MONGO_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
         run: |
           pytest  './tests/test_core.py'
