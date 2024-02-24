@@ -5,6 +5,17 @@ import os
 import sys
 from datetime import datetime, timedelta
 import pytest
+import logging
+
+
+# Configure the logger (optional)
+logging.basicConfig(
+    level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
+# Define the logger
+logger = logging.getLogger(__name__)
+
 
 if "IS_TEST" not in os.environ:
     os.environ['IS_TEST'] = "local"
@@ -17,7 +28,7 @@ sys.path.append(config_directory)
 # Import modules from the application
 from config import ERROR_LVL  # noqa  # pylint: disable=all
 from config import  MONGO_DB # pylint: disable=all  # noqa
-from ftptomongo import connect_to_mongodb, delete_expired_data   # noqa   # pylint: disable=all
+from ftptomongo import connect_to_mongodb, delete_expired_data, delete_s3_file   # noqa   # pylint: disable=all
 
 
 @pytest.fixture
@@ -30,7 +41,24 @@ def cleanup_testdb(request):  # pylint: disable=redefined-outer-name
         # Connect to MongoDB
         collection = connect_to_mongodb()
         # Delete all documents with filename == 'test_file.txt'
-        collection.delete_many({'filename': 'test_file.txt'})
+        del_filter = {'filename': 'test_file.txt'}
+        logger.info("deletion filter: %s" % del_filter)
+
+        # Delete the expired documents and get the count of deleted documents
+        result = collection.find(del_filter)
+
+        # Initialize counter for deleted documents
+        deleted_count = 0
+
+        for doc in result:
+            # Check if the document has a non-empty "s3_file_url" field
+            if doc.get("s3_file_url"):
+                # Extract the S3 file URL from the document
+                s3_file_url = doc["s3_file_url"]
+                # Delete the file from the S3 bucket
+                delete_s3_file(s3_file_url)
+            collection.delete_one({"_id": doc["_id"]})
+        #collection.delete_many({'filename': 'test_file.txt'})
     # Register the cleanup function to be called after the test
     request.addfinalizer(cleanup_testdb_documents)
 
