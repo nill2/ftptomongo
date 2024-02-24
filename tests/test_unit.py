@@ -47,9 +47,6 @@ def cleanup_testdb(request):  # pylint: disable=redefined-outer-name
         # Delete the expired documents and get the count of deleted documents
         result = collection.find(del_filter)
 
-        # Initialize counter for deleted documents
-        deleted_count = 0
-
         for doc in result:
             # Check if the document has a non-empty "s3_file_url" field
             if doc.get("s3_file_url"):
@@ -58,7 +55,7 @@ def cleanup_testdb(request):  # pylint: disable=redefined-outer-name
                 # Delete the file from the S3 bucket
                 delete_s3_file(s3_file_url)
             collection.delete_one({"_id": doc["_id"]})
-        #collection.delete_many({'filename': 'test_file.txt'})
+        # collection.delete_many({'filename': 'test_file.txt'})
     # Register the cleanup function to be called after the test
     request.addfinalizer(cleanup_testdb_documents)
 
