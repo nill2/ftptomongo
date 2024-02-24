@@ -16,7 +16,7 @@ from pymongo.errors import ConnectionFailure
 from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST, HOURS_KEEP  # pylint: disable=import-error
 from config import MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_PASSWORD  # pylint: disable=import-error
 from config import ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO  # pylint: disable=import-error
-from config import AWS_ACCESS_KEY_ID, AWS_SECRET_KEY, AWS_BUCKET_NAME  # pylint: disable=import-error
+from config import AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_BUCKET_NAME  # pylint: disable=import-error
 
 
 # Configure the logger (optional)
@@ -138,7 +138,7 @@ def delete_s3_file(s3_file_url):
         s3_key = s3_file_url.split(bucket_name + ".s3.amazonaws.com/")[1]
 
         # Create an S3 client
-        s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_KEY)
+        s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
 
         # Delete the file from the S3 bucket
         s3.delete_object(Bucket=bucket_name, Key=s3_key)
@@ -166,7 +166,7 @@ class MyHandler(FTPHandler):
         s3_file_url = ""
         try:
             # Upload the received file to AWS S3
-            s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_KEY)
+            s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
             # AWS_bucket_name = 'nill-home-photos'
             s3_key = os.path.basename(received_file)
             s3.upload_file(received_file, AWS_BUCKET_NAME, s3_key)
