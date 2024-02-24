@@ -1,8 +1,8 @@
 # ftptomongo
 
-This project created to store pictures from my IP camera.
-The camera can only send pictures via FTP. the idea of the app to emulate an FTP server and store the content in the database (MongoDB).
-also played with CI to make the process smooth and created unit and integrations tests.
+This project was created to store pictures from my CCTV camera. The camera can only send pictures via FTP. The idea of the app is to emulate an FTP server and store the information in a service database (MongoDB) and the content itself in AWS S3.
+
+The app utilizes continuous integration (CI) built on GitHub Actions (GHA) to ensure a smooth and safe development process by checking the code with unit and integration tests.
 
 ## Installation
 

@@ -185,10 +185,10 @@ class MyHandler(FTPHandler):
             try:
                 with open(received_file, "rb") as file:
                     timestamp = datetime.utcnow().timestamp()
-                    file_data = file.read()
+                    # file_data = file.read()  # as we are using S3 it's not needed
                     collection.insert_one({
                                         "filename": os.path.basename(received_file),
-                                        "data": file_data,
+                                        # "data": file_data,
                                         "s3_file_url": s3_file_url,
                                         "size": os.path.getsize(received_file),
                                         "date": timestamp,
