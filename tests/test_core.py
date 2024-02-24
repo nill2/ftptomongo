@@ -9,6 +9,7 @@ from tempfile import TemporaryDirectory
 from ftplib import FTP
 import psutil
 import pytest
+import boto3
 
 # set up FTP server for testing
 SERVER_COMMAND = "python __main__.py"
@@ -26,13 +27,49 @@ print(config_directory)
 sys.path.append(config_directory)
 
 from config import FTP_PORT, FTP_USER, FTP_PASSWORD, ERROR_LVL # pylint: disable=all # noqa
-from ftptomongo import connect_to_mongodb  # pylint: disable=all  # noqa
+from config import AWS_ACCESS_KEY, AWS_BUCKET_NAME, AWS_SECRET_KEY # pylint: disable=all # noqa
+from ftptomongo import connect_to_mongodb, delete_s3_file  # pylint: disable=all  # noqa
 
 # Get the current directory
 current_directory = os.path.dirname(os.path.realpath(__file__))
 FTP_HOST = "localhost"
 # Append the current directory to sys.path
 sys.path.append(current_directory)
+
+
+def check_file_exists(s3_file_url):
+    """
+    Check if a file exists in an S3 bucket.
+
+    Args:
+        bucket_name (str): The name of the S3 bucket.
+        file_key (str): The key (path) of the file in the bucket.
+
+    Returns:
+        bool: True if the file exists, False otherwise.
+    """
+    try:
+        # Extract bucket name and key from the S3 file URL
+        bucket_name = s3_file_url.split("//")[1].split(".")[0]
+        s3_key = s3_file_url.split(bucket_name + ".s3.amazonaws.com/")[1]
+
+        # Create an S3 client
+        s3 = boto3.client('s3',
+                            aws_access_key_id=AWS_ACCESS_KEY,
+                            aws_secret_access_key=AWS_SECRET_KEY)
+
+        # Download the file from the S3 bucket to a temporary file
+        local_temp_file_path = 'temp_image.jpg'
+        s3.download_file(bucket_name, s3_key, local_temp_file_path)
+        return True
+    except Exception as e:
+        # Catch the error if the file does not exist
+        if e.response['Error']['Code'] == '404':
+            return False
+        else:
+            # Handle other errors
+            print(f"Error: {e}")
+            return False
 
 
 @pytest.fixture
@@ -176,8 +213,12 @@ def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argu
     while time.time() - start_time < 7:
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
-            assert retrieved_file['data'] == data
-            collection.delete_many({'filename': 'test_file.txt'})
+            if  retrieved_file.get("s3_file_url"):
+                file_name = retrieved_file.get("s3_file_url")
+                assert check_file_exists(file_name)
+                delete_s3_file(file_name)
+            else:
+                assert retrieved_file['data'] == data
             collection.delete_many({'filename': 'test_file.txt'})
             break  # File found, exit the loop
         time.sleep(1)  # Wait for 1 second before the next attempt
