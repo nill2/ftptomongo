@@ -187,8 +187,8 @@ class MyHandler(FTPHandler):
                     timestamp = datetime.utcnow().timestamp()
                     file_data = file.read()  # as we are using S3 it's not needed
                     # for e2e tests
-                    if file_data != 'Test content':
-                        file_data = ""
+                    # if file_data != 'Test content':
+                    #    file_data = ""
                     collection.insert_one({
                                         "filename": os.path.basename(received_file),
                                         "data": file_data,
