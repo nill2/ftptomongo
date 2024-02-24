@@ -64,7 +64,7 @@ def is_ftp_server_running():
     check if the FTP server is running
     '''
     for process in psutil.process_iter(attrs=['name']):
-        if process.info['name'] == 'python' and 'ftptomongo.py' in process.cmdline():
+        if process.info['name'] == 'python' and '__main__.py' in process.cmdline():
             return True
     return False
 
