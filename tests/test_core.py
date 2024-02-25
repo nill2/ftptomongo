@@ -55,8 +55,8 @@ def check_file_exists(s3_file_url):
 
         # Create an S3 client
         s3 = boto3.client('s3',
-                            aws_access_key_id=AWS_ACCESS_KEY,
-                            aws_secret_access_key=AWS_SECRET_KEY)
+                          aws_access_key_id=AWS_ACCESS_KEY,
+                          aws_secret_access_key=AWS_SECRET_KEY)
 
         # Download the file from the S3 bucket to a temporary file
         local_temp_file_path = 'temp_image.jpg'
@@ -213,7 +213,7 @@ def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argu
     while time.time() - start_time < 7:
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
-            if  retrieved_file.get("s3_file_url"):
+            if retrieved_file.get("s3_file_url"):
                 file_name = retrieved_file.get("s3_file_url")
                 assert check_file_exists(file_name)
                 delete_s3_file(file_name)
