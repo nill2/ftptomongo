@@ -18,6 +18,8 @@ ARG IS_TEST="prod"
 ARG AWS_ACCESS_KEY="None"
 ARG AWS_SECRET_KEY="None"
 ARG AWS_BUCKET_NAME="nill-home-photos"
+ARG USE_S3="false"
+ARG HISTORY="24"
 
 # Check if secrets are provided and use them
 #RUN if [ -f /run/secrets/SECRET_FTP_USER ]; then \
@@ -45,10 +47,15 @@ RUN echo "SECRET_FTP_USER: $SECRET_FTP_USER"; \
     echo "SECRET_MONGO_HOST: $SECRET_MONGO_HOST"; \
     echo "SECRET_FTP_PORT: $SECRET_FTP_PORT"; \
     echo "AWS_SECRET_KEY: $AWS_SECRET_KEY"; \
-    echo "AWS_ACCESS_KEY: $AWS_ACCESS_KEY"
+    echo "AWS_ACCESS_KEY: $AWS_ACCESS_KEY"; \
+    echo "USE_S3: $USE_S3" ; \
+    echo "HISTORY: $HISTORY"
     
 
 ENV IS_TEST=$IS_TEST
+
+ENV USE_S3=$USE_S3
+ENV HISTORY=$HISTORY
 
 RUN echo "IS_TEST=$IS_TEST"
 # Set environment variables for FTP and MongoDB configurations

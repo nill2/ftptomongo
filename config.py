@@ -10,13 +10,16 @@ import subprocess
 FTP_ROOT = os.getenv("FTP_ROOT", os.path.expanduser('~'))
 print("FTP_ROOT: " + FTP_ROOT)
 
+HISTORY = os.getenv("HISTORY", "24")
+USE_S3 = os.getenv("USE_S3", "false")
+
 FTP_PORT_STR = os.getenv("FTP_PORT", "")
 ERROR_LVL = "debug"
 MONGO_DB = "nill-test"
 FTP_USER = "user"
 FTP_PASSWORD = "password"
 IS_TEST = ""
-HOURS_KEEP = 48  # time in hours we should keep photos
+HOURS_KEEP = int(HISTORY)  # time in hours we should keep photos
 
 # Check if the string is empty or not
 if FTP_PORT_STR:

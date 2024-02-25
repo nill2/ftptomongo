@@ -16,7 +16,7 @@ from pymongo.errors import ConnectionFailure
 from config import FTP_USER, FTP_ROOT, FTP_PORT, MONGO_HOST, HOURS_KEEP  # pylint: disable=import-error
 from config import MONGO_PORT, MONGO_DB, MONGO_COLLECTION, FTP_PASSWORD  # pylint: disable=import-error
 from config import ERROR_LVL, FTP_HOST, FTP_PASSIVE_PORT_FROM, FTP_PASSIVE_PORT_TO  # pylint: disable=import-error
-from config import AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_BUCKET_NAME  # pylint: disable=import-error
+from config import AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_BUCKET_NAME, USE_S3  # pylint: disable=import-error
 
 
 # Configure the logger (optional)
@@ -158,23 +158,27 @@ class MyHandler(FTPHandler):
         authorizer: The authorizer for user authentication.
     """
 
-    def on_file_received(self, received_file):  # pylint: disable=arguments-renamed
+    def on_file_received(self, received_file):  # pylint: disable=arguments-renamed # noqa
         """
         key function that on a file_received event will save it to the database(MongoDB)
         in future to a s3 with a link stored in the MongoDB
         """
         s3_file_url = ""
-        try:
-            # Upload the received file to AWS S3
-            s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
-            # AWS_bucket_name = 'nill-home-photos'
-            s3_key = os.path.basename(received_file)
-            s3.upload_file(received_file, AWS_BUCKET_NAME, s3_key)
+        if USE_S3 == "true":
+            try:
+                # Upload the received file to AWS S3
+                s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY)
+                # AWS_bucket_name = 'nill-home-photos'
+                s3_key = os.path.basename(received_file)
+                s3.upload_file(received_file, AWS_BUCKET_NAME, s3_key)
 
-            # Get the S3 file URL
-            s3_file_url = f"https://{AWS_BUCKET_NAME}.s3.amazonaws.com/{s3_key}"
-        except ClientError as e:
-            print(f"Error uploading file to S3: {e}")
+                # Get the S3 file URL
+                s3_file_url = f"https://{AWS_BUCKET_NAME}.s3.amazonaws.com/{s3_key}"
+                logger.info(f"Uploading file to S3: {s3_file_url}")
+            except ClientError as e:
+                logger.error(f"Error uploading file to S3: {e}")
+        else:
+            logger.info("Storing to Mongo only")
 
         # Upload the received file to MongoDB
         collection = connect_to_mongodb()
@@ -188,7 +192,9 @@ class MyHandler(FTPHandler):
                     file_data = file.read()  # as we are using S3 it's not needed
                     # for e2e tests
                     # if file_data != 'Test content':
-                    file_data = ""
+                    if USE_S3 == "true":
+                        file_data = ""
+                        logger.info("Setting file_data as empty string")
                     collection.insert_one({
                                         "filename": os.path.basename(received_file),
                                         "data": file_data,
@@ -207,7 +213,7 @@ class MyHandler(FTPHandler):
                 print("Error: Permission denied to open the file.")
             except Exception as exception:  # pylint: disable=W0718
                 # Handle other types of exceptions
-                print(f"An unexpected error occurred: {exception}")
+                print(f"An unexpected error occurred: {exception} ")
 
             # Clean up the expired documents in the database
             expired_docs_deleted = delete_expired_data(collection, "bsonTime", HOURS_KEEP)
