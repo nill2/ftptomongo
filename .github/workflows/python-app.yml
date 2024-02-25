@@ -23,7 +23,7 @@ jobs:
 
       - name: Checkout Code
         uses: actions/checkout@v3
-  
+
       - name: Install Miniconda and update dependencies
         run: |
           wget https://repo.anaconda.com/miniconda/Miniconda3-py38_4.9.2-Linux-x86_64.sh -O miniconda.sh
@@ -35,35 +35,17 @@ jobs:
           conda env update --file environment.yml --name base
         env:
           CONDA_HOME: $HOME/miniconda
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
         with:
           python-version: '3.10'
-      - name: Add conda to system path
-        run: |
-          # $CONDA is an environment variable pointing to the root of the miniconda directory
-          echo $CONDA/bin >> $GITHUB_PATH
-      - name: Install tools from PyPI
-        run: |
-          pip install pyftpdlib
-          pip install pylint
-          pip install psutil
-          pip install pymongo
-          pip install hvac
-          pip install flake8
-          pip install pytest
-          pip install boto3
-          pip install -r  requirements.txt
-      - name: Lint with flake8
-        run: |
-          cd "$CurrentDirectory"
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Run Pylint
-        run: |
-          pylint $(git ls-files '*.py')
+      - name: Set up packages
+        uses: nill2/gha/install-packages@main
+  
+      - name: Lint with flake8 and pylint
+        uses: nill2/gha/lint@main
+
       - name: Set up MongoDB
         run: |
           docker run -d --name mongodb -p 27017:27017 mongo:latest
@@ -71,19 +53,14 @@ jobs:
         timeout-minutes: 3
   
       - name: Create MongoDB Collection
-        run: |
-          # Install MongoDB client
-          # apt-get update
-          #apt-get install -y mongodb-clients
-          
+        run: |          
           # Wait for MongoDB to start
           sleep 10
-          
+
           # Create a collection for testing
-          #sudo -u mongodb mongo --eval 'db.createCollection("nill-home-photos")' localhost/nill-home
           python setuptstmongo.py
         timeout-minutes: 3
-        
+
       - name: Start FTP server
         env:
           IS_TEST: "GHA"
@@ -93,7 +70,6 @@ jobs:
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
         run: python __main__.py &
-
 
       - name: Test unit tests with pytest
         env:
@@ -108,7 +84,6 @@ jobs:
           cd $CurrentDirectory
           pytest  './tests/test_unit.py'
 
-          
       - name: Test e2e tests with pytest
         env:
           IS_TEST: "GHA"
