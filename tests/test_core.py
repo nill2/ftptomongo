@@ -213,7 +213,7 @@ def test_ftp_e2e(cleanup_files, cleanup_mongodb):  # pylint: disable=unused-argu
     while time.time() - start_time < 7:
         retrieved_file = collection.find_one({'filename': 'test_file.txt'})
         if retrieved_file:
-            if retrieved_file.get("s3_file_url"):
+            if retrieved_file.get("s3_file_url") and retrieved_file.get("s3_file_url") != "":
                 file_name = retrieved_file.get("s3_file_url")
                 assert check_file_exists(file_name)
                 delete_s3_file(file_name)
