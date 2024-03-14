@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 def signal_handler(sig, frame):  
     """
-    Signal handler function to handle KeyboardInterrupt (Ctrl+C).
+    Signal handler  function to handle KeyboardInterrupt (Ctrl+C).
     """
     print("Ctrl+C detected. Exiting...")
     sys.exit(0)
