@@ -88,6 +88,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE $FTP_PORT
 EXPOSE 52000-52003
+EXPOSE 9090
 
 # Run the Python script
 CMD ["python", "__main__.py"]
