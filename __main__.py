@@ -18,7 +18,7 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 import pyroscope  # pylint: disable=import-error
 import ftptomongo
-from config import PYROSCOPE_SERVER_ADDRESS
+from config import PYROSCOPE_SERVER_ADDRESS  # pylint: disable=import-error
 
 
 pyroscope.configure(
