@@ -16,8 +16,27 @@ from opentelemetry import metrics
 from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
-
+import pyroscope  # pylint: disable=import-error
 import ftptomongo
+from config import PYROSCOPE_SERVER_ADDRESS  # pylint: disable=import-error
+
+
+pyroscope.configure(
+    application_name="ftptomongo",
+    # replace this with some name for your application
+    server_address=PYROSCOPE_SERVER_ADDRESS,
+    # replace this with the address of your Pyroscope server
+    sample_rate=1000,  # default is 100
+    detect_subprocesses=True,  # detect subprocesses started by the main process; default is False
+    oncpu=True,  # report cpu time only; default is True
+    gil_only=True,
+    # only include traces for threads that are holding on to the Global Interpreter Lock;
+    # default is True
+    enable_logging=True,  # does enable logging facility; default is False
+    tags={
+        "region": '{os.getenv("REGION")}',
+    }
+)
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 
