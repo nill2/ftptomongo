@@ -49,7 +49,21 @@ Install pytest (if you want run unit or e2e tests) and other tools
 And run the application in the application folder
 
 ```shell
-python3 __main__
+python3 ftptomongo_main.py
+```
+
+### Docker installation
+
+You can also run the application using Docker. To pull the latest Docker image, use the following command:4
+
+```shell
+docker pull nill2/ftptomongo:latest
+```
+
+To run the Docker container, use the following command:
+
+```shell
+docker pull nill2/ftptomongo:latest
 ```
 
 ## Testing
