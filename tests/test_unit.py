@@ -1,47 +1,52 @@
-'''
-This is a set of unit tests that will be used to test the FTP server.
-'''
+"""This is a set of unit tests that will be used to test the FTP server."""
+
 import os
 import sys
 from datetime import datetime, timedelta
 import pytest
 import logging
-
+from pymongo.collection import Collection  # Import Collection type
+from typing import Optional
+from pytest import FixtureRequest
 
 # Configure the logger (optional)
-logging.basicConfig(
-    level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 # Define the logger
 logger = logging.getLogger(__name__)
 
-
 if "IS_TEST" not in os.environ:
-    os.environ['IS_TEST'] = "local"
+    os.environ["IS_TEST"] = "local"
 
 # Get the current directory of the test script
 current_directory = os.path.dirname(os.path.abspath(__file__))
-config_directory = os.path.join(current_directory, '..')
+config_directory = os.path.join(current_directory, "..")
 sys.path.append(config_directory)
 
 # Import modules from the application
 from config import ERROR_LVL  # noqa  # pylint: disable=all
-from config import  MONGO_DB # pylint: disable=all  # noqa
-from ftptomongo import connect_to_mongodb, delete_expired_data, delete_s3_file   # noqa   # pylint: disable=all
+from config import MONGO_DB  # pylint: disable=all  # noqa
+from ftptomongo import (  # noqa
+    connect_to_mongodb,
+    delete_expired_data,
+    delete_s3_file,
+)  # pylint: disable=all  # noqa
 
 
 @pytest.fixture
-def cleanup_testdb(request):  # pylint: disable=redefined-outer-name
-    '''
-    delete test data in MongoDB documents after testing
-    '''
+def cleanup_testdb(request: FixtureRequest) -> None:  # Fix the untyped decorator error
+    """Delete test data in MongoDB documents after testing."""
+
     # Define a cleanup function
-    def cleanup_testdb_documents():
+    def cleanup_testdb_documents() -> None:
         # Connect to MongoDB
-        collection = connect_to_mongodb()
+        collection: Optional[Collection] = connect_to_mongodb()
+        if collection is None:
+            logger.error("MongoDB connection failed, cannot clean up test data.")
+            return  # Exit if the collection is None
+
         # Delete all documents with filename == 'test_file.txt'
-        del_filter = {'filename': 'test_file.txt'}
+        del_filter = {"filename": "test_file.txt"}
         logger.info("deletion filter: %s" % del_filter)
 
         # Delete the expired documents and get the count of deleted documents
@@ -55,20 +60,18 @@ def cleanup_testdb(request):  # pylint: disable=redefined-outer-name
                 # Delete the file from the S3 bucket
                 delete_s3_file(s3_file_url)
             collection.delete_one({"_id": doc["_id"]})
-        # collection.delete_many({'filename': 'test_file.txt'})
+
     # Register the cleanup function to be called after the test
     request.addfinalizer(cleanup_testdb_documents)
 
-def test_returns_number_of_documents_deleted(cleanup_testdb):  # pylint: disable=unused-argument,redefined-outer-name # noqa
-    '''
-    test the delete_expired_data function
-    '''
+
+def test_returns_number_of_documents_deleted(
+    cleanup_testdb: None,
+) -> None:
+    """Test the delete_expired_data function."""
     # Create a mock collection
     assert MONGO_DB == "nill-test"
-    if ERROR_LVL == 'debug':
-        print('test_connect_to_mongodb')
-    collection = connect_to_mongodb()
-    print("collection "+str(collection))
+    collection: Optional[Collection] = connect_to_mongodb()
     assert collection is not None
 
     # Set the expiration period to 30 days
@@ -97,14 +100,12 @@ def test_returns_number_of_documents_deleted(cleanup_testdb):  # pylint: disable
     assert deleted_count == 1
 
 
-def test_connect_to_mongodb():
-    '''
-    test the connect_to_mongodb function
-    check if collection is not None
-    '''
-    if ERROR_LVL == 'debug':
-        print('test_connect_to_mongodb')
-    collection = connect_to_mongodb()
+def test_connect_to_mongodb() -> None:
+    """Test the connect_to_mongodb function.
+
+    Check if collection is not None.
+    """
+    collection: Optional[Collection] = connect_to_mongodb()
     assert collection is not None
 
 
