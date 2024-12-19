@@ -4,8 +4,8 @@ name: Python application
 on:
   push:
     branches:
-      - '**'
-      - '!main'
+      - "**"
+      - "!main"
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
-      matrix: 
+      matrix:
         version: [1]
 
     steps:
@@ -39,10 +39,10 @@ jobs:
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
         with:
-          python-version: '3.10'
+          python-version: "3.10"
       - name: Set up packages
         uses: nill2/gha/install-packages@main
-  
+
       - name: Lint with flake8 and pylint
         uses: nill2/gha/lint@main
 
@@ -51,9 +51,9 @@ jobs:
           docker run -d --name mongodb -p 27017:27017 mongo:latest
           sleep 10  # Wait for MongoDB to start
         timeout-minutes: 3
-  
+
       - name: Create MongoDB Collection
-        run: |          
+        run: |
           # Wait for MongoDB to start
           sleep 10
 
@@ -69,7 +69,7 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-        run: python __main__.py &
+        run: python ftptomongo_main.py &
 
       - name: tests
         uses: nill2/gha/run-tests@main
@@ -80,8 +80,8 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          UNIT_TEST: 'Yes'
-          E2E_TEST: 'Yes'
+          UNIT_TEST: "Yes"
+          E2E_TEST: "Yes"
 
       #- name: Test unit tests with pytest
       #  env:
@@ -89,9 +89,9 @@ jobs:
       #    MONGO_HOST: ${{ secrets.MONGO_HOST }}
       #    FTP_USER: ${{ secrets.FTP_USER }}
       #    FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-      #    FTP_PORT: ${{ secrets.FTP_PORT }}    
+      #    FTP_PORT: ${{ secrets.FTP_PORT }}
       #    AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      #    AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }} 
+      #    AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       #  run: |
       #    cd $CurrentDirectory
       #    pytest  './tests/test_unit.py'

@@ -11,7 +11,7 @@ The app utilizes continuous integration (CI) built on GitHub Actions (GHA) to en
 #### Prerequisites
 
 Installed [python](https://docs.python.org/3/installing/index.html) with dependencies...
-Installed [pip3](https://pip.pypa.io/en/stable/installation/) 
+Installed [pip3](https://pip.pypa.io/en/stable/installation/)
 Installed [git](https://github.com/git-guides/install-git)
 
 #### Clone this repository to your local machine

@@ -3,8 +3,7 @@ name: Deploy to Google Cloud
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Upload Python Package"] 
-  
+    workflows: ["Upload Python Package"]
 
 jobs:
   deploy:
@@ -17,7 +16,7 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
         with:
-          version: '343.0.0'
+          version: "343.0.0"
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           PROJECT_ID: smooth-verve-400915
@@ -25,7 +24,7 @@ jobs:
       - name: Configure Docker
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: "3.7"
 
       - name: Pull Docker image
         run: |
@@ -38,7 +37,7 @@ jobs:
       - name: Configure Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
         with:
-          version: '343.0.0'
+          version: "343.0.0"
         env:
           PROJECT_ID: smooth-verve-400915
 
@@ -50,4 +49,3 @@ jobs:
             --region europe-west4 \
             --port=${{secrets.FTP_PORT}}} \
             --allow-unauthenticated
-          

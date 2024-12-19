@@ -50,7 +50,7 @@ RUN echo "SECRET_FTP_USER: $SECRET_FTP_USER"; \
     echo "AWS_ACCESS_KEY: $AWS_ACCESS_KEY"; \
     echo "USE_S3: $USE_S3" ; \
     echo "HISTORY: $HISTORY"
-    
+
 
 ENV IS_TEST=$IS_TEST
 
@@ -91,4 +91,4 @@ EXPOSE 52000-52003
 EXPOSE 9090
 
 # Run the Python script
-CMD ["python", "__main__.py"]
+CMD ["python", "ftptomongo_main.py"]
